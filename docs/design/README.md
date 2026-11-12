@@ -14,8 +14,8 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 
 | Phase | Outcome | Status |
 |-------|---------|--------|
-| **1** — Caso de estudio y preguntas | Seis preguntas verificadas contra los datos | In progress (`planificacion`) |
-| **2** — Fuentes de datos | RDS MariaDB + archivos en EC2 + URL de la TLC | Planned - no topic |
+| **1** — Caso de estudio y preguntas | Seis preguntas verificadas contra los datos; escrito en el Docx | In progress (`planificacion`) |
+| **2** — Fuentes de datos | RDS = zonas + green, EC2 = yellow, URL = HVFHV; reparto decidido, falta construir | In progress (`planificacion`) |
 | **3** — Ingesta automática a S3 | Datos en las zonas del datalake sin pasos manuales | Planned - no topic |
 | **4** — Preparación raw → trusted | Glue + Spark | Planned - no topic |
 | **5** — Catalogación | Glue Data Catalog + EMR/Hive | Planned - no topic |
@@ -39,16 +39,19 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | — | Índice de informes | [INDEX.md](INDEX.md) |
 | planificacion | Rúbrica | [rubrica.md](planificacion/current/rubrica.md) |
 | planificacion | Preguntas de negocio y datos | [preguntas-de-negocio.md](planificacion/current/preguntas-de-negocio.md) |
+| planificacion | Fuentes de datos (Punto 2) | [fuentes-de-datos.md](planificacion/current/fuentes-de-datos.md) |
+| — | Documento de entrega (Docx del enunciado) | [SI3007-262-proyecto2.docx](../../SI3007-262-proyecto2.docx) |
 
 ## Open decisions
 
 | Decision | Options | Status |
 |----------|---------|--------|
-| Qué datos van en RDS MariaDB y cuáles en archivos en EC2 | Por definir | Proposed |
+| Qué datos van en RDS MariaDB y cuáles en archivos en EC2 | RDS = zonas + green, EC2 = yellow, URL = HVFHV (convención "Fuentes de datos") | Accepted |
+| Extracción RDS → S3 | Glue JDBC (requiere red de VPC) / script con cron en la EC2 | Proposed |
 | P2: qué tarifa se compara entre yellow y HVFHV | `fare_amount` vs `base_passenger_fare` / con recargos | Proposed |
 | P3: denominador del porcentaje que recibe el conductor | Tarifa base / todo lo que paga el pasajero | Proposed |
 | Orquestación del pipeline | Airflow / servicios nativos de AWS / otra | Proposed |
 | Streamlit detrás de API Gateway | Proxy directo a Streamlit / API Gateway → Lambda → Athena consumida por Streamlit | Proposed |
-| Restricciones de AWS Academy | Revisar IAM, servicios y duración de sesión | Proposed |
+| Restricciones de AWS Academy | Verificadas por CLI (findings; convención "Roles de AWS Academy") | Accepted |
 
 _States: **Proposed** (options listed, nothing chosen) · **Accepted** (chosen; the rationale goes in the CHANGELOG) · **Deprecated** (no longer relevant) · **Superseded** (replaced; link the new row)._

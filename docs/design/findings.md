@@ -31,3 +31,15 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-10 · **Source topic:** `planificacion`
 - **Finding:** de 12,38 GiB en 72 archivos (2024–2025), HVFHV ocupa 10,93 GiB, con archivos de hasta 511 MiB (unos 20 M de filas al mes). Yellow pesa 1,42 GiB y green unos 13 MiB. El dimensionamiento (timeouts de ingesta, workers de Glue o EMR) lo define HVFHV.
 - **Provenance:** `HEAD` a los 72 archivos en CloudFront (sesión 2026-11-10).
+
+## [hecho] AWS Academy: límites de tamaño por servicio en Learner Lab
+
+- **Date:** 2026-11-11 · **Source topic:** `planificacion`
+- **Finding:** solo `us-east-1` y `us-west-2`. EC2 hasta `t3.large` / `m5.large` / `c5.large` (ningún `xlarge`). RDS MariaDB `db.t3.micro`–`db.t3.medium`, Multi-AZ y ≥ 101 GB permitidos; `db.t3.large` y `db.m5.large` denegados. Lambda con `LabRole` acepta 3008 MB, 900 s y 10 GB de `/tmp`. Glue acepta jobs `G.1X` × 10 con Glue 5.0. EMR acepta en la API `m5.xlarge` / `m5.2xlarge` con Hive y Spark (`emr-7.14.0`), sin verificar que lance las máquinas.
+- **Provenance:** sesión 2026-11-11: `run-instances --dry-run` por tipo, `create-db-instance` con contraseña inválida, recursos de prueba creados y borrados.
+
+## [hecho] AWS Academy: no se pueden crear roles ni leer las políticas del laboratorio
+
+- **Date:** 2026-11-11 · **Source topic:** `planificacion`
+- **Finding:** `iam:CreateRole` está denegado y las políticas `Pvoclabs*` no se pueden leer. Existen `LabRole`, `LabInstanceProfile`, `EMR_DefaultRole` y `EMR_EC2_DefaultRole`; todo el pipeline usa esos (convención "Roles de AWS Academy"). Los permisos se descubren probando: `--dry-run` en EC2, parámetros inválidos en RDS/EMR.
+- **Provenance:** sesión 2026-11-11 con el rol `voclabs` por CLI.

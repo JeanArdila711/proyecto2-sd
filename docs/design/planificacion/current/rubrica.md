@@ -1,6 +1,6 @@
 # Rúbrica — Proyecto 2 de Big Data (SI3007, 2026-2)
 
-Fuente: `SI3007-262-proyecto2.docx`, en la carpeta local del proyecto, fuera del repo. El documento dice "proyecto 3" en dos lugares; es un error del profesor y no cambia nada (Jean, 2026-11-10).
+Fuente: `SI3007-262-proyecto2.docx`, en la raíz del repo; es también el documento de entrega que se va diligenciando. El documento dice "proyecto 3" en dos lugares; es un error del profesor y no cambia nada (Jean, 2026-11-10).
 
 - **Peso:** 15% · **Entrega y sustentación presencial:** 2026-11-19
 - **Profesor:** Edwin Montoya

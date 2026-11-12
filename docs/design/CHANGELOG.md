@@ -2,6 +2,19 @@
 
 Newest first. One `##` heading per day with activity. Write outcomes, not implementation steps. This file is appended to, never rewritten, and is not loaded by default.
 
+## 2026-11-11
+
+### planificacion — Docx, límites de AWS y fuentes (David)
+- Docx del enunciado diligenciado: integrantes, link del repo (`JeanArdila711/proyecto2-sd`), Punto 1 y Punto 2. El Docx quedó versionado en la raíz del repo (commit `e9056cd`).
+- Límites de AWS Academy verificados por CLI sin dejar recursos: regiones, tamaños de EC2 y RDS, Lambda, Glue, EMR; no se pueden crear roles IAM (2 findings).
+- Decidido el reparto de fuentes del Punto 2 (convención "Fuentes de datos"): se descartaron solo zonas en RDS (base de datos decorativa) y yellow en RDS (~90 M filas para `db.t3.micro`). Se agregó un simulador de llegada mensual para demostrar la ingesta automática.
+- Convención nueva "Roles de AWS Academy".
+
+### Files (proyecto2-sd, branch main)
+- `docs/design/planificacion/current/fuentes-de-datos.md` (new)
+- `docs/design/CONTEXT.md`, `README.md`, `CHANGELOG.md`, `findings.md`, `planificacion/context.md`, `planificacion/current/rubrica.md`
+- `SI3007-262-proyecto2.docx`
+
 ## 2026-11-10
 
 ### planificacion — arranque del proyecto y memoria
