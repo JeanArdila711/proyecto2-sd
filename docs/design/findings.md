@@ -49,3 +49,9 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
 - **Finding:** una EC2 con Amazon Linux 2023 y `LabInstanceProfile` aparece `Online` en SSM a los pocos minutos. Con `ssm send-command` (`AWS-RunShellScript`) se corren comandos en la instancia desde el portátil, sin SSH ni `labsuser.pem`; sirve para siembras, verificaciones y automatizar pasos en la EC2. El rol también puede leer y escribir el bucket del proyecto.
 - **Provenance:** verificación de `tlc-fuente-archivos` por SSM, sesión 2026-11-11.
+
+## [hecho] EC2 Amazon Linux 2023: `python3` es 3.9 y boto3 ya no lo soporta
+
+- **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
+- **Finding:** el `python3` del sistema en AL2023 es 3.9.25 y boto3 avisa que dejó de soportarlo (desde 2026-04-29). Instalar `python3.11` con `dnf` y crear un venv con él; no instalar paquetes con pip sobre el Python del sistema. Aplica a cualquier código que corra en una EC2 (fuentes, Streamlit del Punto 8).
+- **Provenance:** primera corrida de `punto2-fuentes/sembrar.py`, sesión 2026-11-11.

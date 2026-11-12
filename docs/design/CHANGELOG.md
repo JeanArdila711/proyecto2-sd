@@ -13,12 +13,15 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 ### punto2-fuentes — esqueleto del repo e infraestructura (David)
 - Topic nuevo `punto2-fuentes`. Repo con un directorio por punto de la rúbrica, README principal con los pasos para reproducir y `comun/config.py` con los nombres de los recursos.
 - Infraestructura del Punto 2 creada en AWS Academy con `punto2-fuentes/infra/crear_infra.py` (boto3, idempotente): bucket del datalake, RDS MariaDB 11.8, EC2 de archivos, security groups y endpoint de S3. Verificada desde la EC2 por SSM.
+- Siembra y simulador funcionando: esquema de MariaDB y 265 zonas cargadas; liberados 2024-01 a 2024-03 en las tres fuentes (167.585 filas de green que cuadran con la TLC, 3 Parquet de yellow, reloj simulado en 2024-03). El código de la EC2 se ejecuta por SSM con Python 3.11; contraseña en Parameter Store. Nuevo `apagar_infra.py`.
+- La convención "Fuentes de datos" ahora incluye el contrato con la ingesta (reloj simulado, columnas de auditoría, escritura atómica).
 - Convención nueva "Infraestructura por scripts". Se terminaron las 3 instancias `dfsha-nodo-*` de otro trabajo que gastaban presupuesto del laboratorio.
 
 ### Files (proyecto2-sd, branch main)
 - `docs/design/planificacion/current/fuentes-de-datos.md` (new)
 - `README.md`, `.gitignore`, `config.example.env`, `requirements.txt`, `comun/`, `punto1-caso-de-estudio/` … `punto8-visualizacion-app/` (new)
 - `docs/design/punto2-fuentes/context.md` (new)
+- `punto2-fuentes/sembrar.py`, `simular.py`, `remoto.py`, `ec2/` (`esquema.sql`, `fuente.py`, `sembrar.py`, `simulador.py`, `requirements.txt`), `infra/apagar_infra.py` (new)
 - `docs/design/CONTEXT.md`, `README.md`, `CHANGELOG.md`, `findings.md`, `planificacion/context.md`, `planificacion/current/rubrica.md`
 - `SI3007-262-proyecto2.docx`
 

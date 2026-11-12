@@ -30,7 +30,15 @@ RECURSOS = {
     "ec2_perfil": "LabInstanceProfile",
     "ec2_llave": "vockey",
     "ec2_carpeta_yellow": "/data/tlc/yellow",
+    "ec2_dir_codigo": "/opt/proyecto2",
+    # Parameter Store: contraseña de MariaDB (SecureString) y reloj del simulador (último mes liberado)
+    "param_db_password": "/proyecto2-sd/db/password",
+    "param_mes_simulado": "/proyecto2-sd/simulacion/mes_actual",
+    # Prefijo del bucket donde se publica el código que corre en la EC2 (fuera de las zonas del datalake)
+    "s3_prefijo_codigo": "codigo/",
 }
+
+URL_TLC = "https://d37ci6vzurychx.cloudfront.net"
 
 
 def cargar():

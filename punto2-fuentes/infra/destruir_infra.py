@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Borra la infraestructura que crea crear_infra.py, para no gastar presupuesto del laboratorio.
 
-Borra la EC2, la RDS (sin snapshot final), el DB subnet group, los security groups y el endpoint
-de S3. El bucket del datalake solo se borra con --incluir-bucket, porque contiene los datos.
+Borra la EC2, la RDS (sin snapshot final), el DB subnet group, los security groups, el endpoint
+de S3 y los parámetros /proyecto2-sd/* de Parameter Store. El bucket del datalake solo se borra con --incluir-bucket, porque contiene los datos.
 
 Uso (desde la raíz del repo):
   python punto2-fuentes/infra/destruir_infra.py --confirmar
@@ -108,6 +108,12 @@ def main():
                 if e.response["Error"]["Code"] != "DependencyViolation" or intento == 19:
                     raise
                 time.sleep(15)
+
+    # Parámetros de Parameter Store (contraseña y reloj del simulador)
+    params = [R["param_db_password"], R["param_mes_simulado"]]
+    borrados = aws.client("ssm").delete_parameters(Names=params)["DeletedParameters"]
+    if borrados:
+        log(f"parámetros borrados: {', '.join(borrados)}")
 
     if args.incluir_bucket:
         bucket = config.nombre_bucket(aws)

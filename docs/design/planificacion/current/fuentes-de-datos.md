@@ -7,7 +7,7 @@ Decidido por David el 2026-11-11. El veredicto vive en `CONTEXT.md` § Conventio
 | Fuente | Qué contiene | Volumen | Recurso (límites en `findings.md`) |
 |---|---|---|---|
 | **RDS MariaDB** | Tabla `taxi_zones` (Taxi Zone Lookup) y tabla `green_trips` (viajes de green 2024–2025) | 265 filas + ~1,3 M filas | `db.t3.micro`, 20 GB |
-| **Archivos en EC2** | Los 24 Parquet mensuales de yellow 2024–2025, tal como los publica la TLC, en una carpeta del disco de la instancia | 1,42 GiB | `t3.small` o `t3.medium` con `LabInstanceProfile` |
+| **Archivos en EC2** | Los 24 Parquet mensuales de yellow 2024–2025, tal como los publica la TLC (se descartó convertir a CSV: ~8–10 GB y un paso más), en una carpeta del disco de la instancia | 1,42 GiB | `t3.small` o `t3.medium` con `LabInstanceProfile` |
 | **URL en Internet** | Los 48 Parquet de HVFHV (Uber y Lyft) directo de CloudFront de la TLC | 10,93 GiB | — |
 
 Por qué así:
@@ -34,5 +34,4 @@ Preguntas por fuente:
 ## Puntos abiertos
 
 - **Extracción desde RDS hacia S3:** primero Glue con conexión JDBC (la rúbrica nombra Glue). Requiere VPC: security group autorreferenciado y endpoint de S3, no probados en Learner Lab. Plan B: script Python con cron en la EC2. Se decide en el diseño de la ingesta (Punto 3).
-- **Formato de yellow en EC2:** Parquet tal como lo publica la TLC (recomendado; CSV pesaría ~8–10 GB y añade un paso de conversión). Pendiente de confirmar al implementar.
 - **Opcional:** el shapefile de zonas (`taxi_zones.zip`, dato TLC) en la EC2, para mapas en el Punto 8.

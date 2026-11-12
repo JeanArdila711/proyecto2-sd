@@ -9,6 +9,7 @@ Recursos (todos con la etiqueta Project=proyecto2-sd):
   - RDS MariaDB tlc-mariadb (db.t3.micro, 20 GB, privada).
   - EC2 tlc-fuente-archivos (t3.small, Amazon Linux 2023, LabInstanceProfile) con la carpeta
     /data/tlc/yellow para los archivos de taxis amarillos.
+  - Parámetro /proyecto2-sd/db/password (SecureString) con la contraseña de config.env.
 
 Es idempotente: si un recurso ya existe lo reutiliza, y si la EC2 o la RDS están detenidas las arranca.
 
@@ -33,7 +34,7 @@ from comun.config import RECURSOS as R  # noqa: E402
 
 USER_DATA = f"""#!/bin/bash
 set -euxo pipefail
-dnf install -y python3-pip mariadb105
+dnf install -y python3.11 mariadb105
 mkdir -p {R["ec2_carpeta_yellow"]}
 chown -R ec2-user:ec2-user /data
 """
@@ -213,6 +214,16 @@ def asegurar_rds(rds, cfg, sg_rds):
     log(f"RDS {ident}: creándose (MariaDB {version}, {R['rds_clase']}); tarda ~10 min")
 
 
+def asegurar_parametro_password(ssm):
+    """Copia DB_PASSWORD de config.env a Parameter Store, para que la EC2 (y luego Glue/Lambda) la lean."""
+    password = config.cargar().get("DB_PASSWORD")
+    if not password:
+        log("AVISO: DB_PASSWORD vacía en config.env; no se publicó en Parameter Store")
+        return
+    ssm.put_parameter(Name=R["param_db_password"], Value=password, Type="SecureString", Overwrite=True)
+    log(f"contraseña publicada en Parameter Store ({R['param_db_password']}, SecureString)")
+
+
 # ---------------------------------------------------------------- EC2
 def buscar_ec2(ec2):
     reservas = ec2.describe_instances(
@@ -294,6 +305,7 @@ def main():
     print("Fuente: RDS MariaDB")
     asegurar_subnet_group(rds, ec2, vpc)
     asegurar_rds(rds, cfg, sg_rds)
+    asegurar_parametro_password(ssm)
 
     print("Fuente: archivos en EC2")
     instancia = asegurar_ec2(ec2, ssm, sg_ec2)
