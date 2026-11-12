@@ -15,7 +15,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | Phase | Outcome | Status |
 |-------|---------|--------|
 | **1** — Caso de estudio y preguntas | Seis preguntas verificadas contra los datos; escrito en el Docx | In progress (`planificacion`) |
-| **2** — Fuentes de datos | RDS = zonas + green, EC2 = yellow, URL = HVFHV; reparto decidido, falta construir | In progress (`planificacion`) |
+| **2** — Fuentes de datos | RDS = zonas + green, EC2 = yellow, URL = HVFHV; infraestructura creada, faltan siembra y simulador | In progress (`punto2-fuentes`) |
 | **3** — Ingesta automática a S3 | Datos en las zonas del datalake sin pasos manuales | Planned - no topic |
 | **4** — Preparación raw → trusted | Glue + Spark | Planned - no topic |
 | **5** — Catalogación | Glue Data Catalog + EMR/Hive | Planned - no topic |
@@ -28,6 +28,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | Topic | Title | Status |
 |-------|-------|--------|
 | [`planificacion`](planificacion/context.md) | Planificación del proyecto | In progress |
+| [`punto2-fuentes`](punto2-fuentes/context.md) | Fuentes de datos: infraestructura, siembra y simulador | In progress |
 
 ## Documents
 

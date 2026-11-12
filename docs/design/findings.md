@@ -43,3 +43,9 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-11 · **Source topic:** `planificacion`
 - **Finding:** `iam:CreateRole` está denegado y las políticas `Pvoclabs*` no se pueden leer. Existen `LabRole`, `LabInstanceProfile`, `EMR_DefaultRole` y `EMR_EC2_DefaultRole`; todo el pipeline usa esos (convención "Roles de AWS Academy"). Los permisos se descubren probando: `--dry-run` en EC2, parámetros inválidos en RDS/EMR.
 - **Provenance:** sesión 2026-11-11 con el rol `voclabs` por CLI.
+
+## [hecho] AWS Academy: Session Manager funciona en las EC2 con `LabInstanceProfile`
+
+- **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
+- **Finding:** una EC2 con Amazon Linux 2023 y `LabInstanceProfile` aparece `Online` en SSM a los pocos minutos. Con `ssm send-command` (`AWS-RunShellScript`) se corren comandos en la instancia desde el portátil, sin SSH ni `labsuser.pem`; sirve para siembras, verificaciones y automatizar pasos en la EC2. El rol también puede leer y escribir el bucket del proyecto.
+- **Provenance:** verificación de `tlc-fuente-archivos` por SSM, sesión 2026-11-11.

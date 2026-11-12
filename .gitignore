@@ -1,0 +1,16 @@
+# Configuración local con contraseñas: nunca al repo
+config.env
+.env
+*.pem
+
+# Entornos y cachés
+.venv/
+__pycache__/
+*.pyc
+
+# Datos descargados (viven en S3, no en git)
+datos/
+*.parquet
+
+# Sistema
+.DS_Store
