@@ -55,3 +55,15 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
 - **Finding:** el `python3` del sistema en AL2023 es 3.9.25 y boto3 avisa que dejó de soportarlo (desde 2026-04-29). Instalar `python3.11` con `dnf` y crear un venv con él; no instalar paquetes con pip sobre el Python del sistema. Aplica a cualquier código que corra en una EC2 (fuentes, Streamlit del Punto 8).
 - **Provenance:** primera corrida de `punto2-fuentes/sembrar.py`, sesión 2026-11-11.
+
+## [hecho] RDS MariaDB 11.8 exige TLS (`require_secure_transport=ON`)
+
+- **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
+- **Finding:** `tlc-mariadb` rechaza conexiones sin cifrar (`ERROR 3159`). pymysql conecta sin configurar nada, pero el cliente `mariadb` necesita `--ssl`, y la conexión JDBC de Glue (Punto 3) tendrá que activar SSL.
+- **Provenance:** consulta de evidencias desde la EC2 por SSM, sesión 2026-11-11.
+
+## [regla] Capturas de la consola de AWS: enmascarar el ID de cuenta en todos los frames
+
+- **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
+- **Finding:** el repo y el Docx son públicos y la consola muestra el ID de cuenta en el menú y en los ARN, a veces dentro de iframes `about:blank` y con caracteres invisibles entre los dígitos. Antes de cada captura, reemplazar el ID en todos los frames y verificar que no quede; si queda, no guardar la captura. Revisar la imagen a ojo antes de usarla.
+- **Provenance:** primera tanda de capturas del Punto 2: el ARN de la EC2 se filtró hasta aplicar la máscara por frame (sesión 2026-11-11).

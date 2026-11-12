@@ -29,12 +29,12 @@ Load by task, not all at once. Solo `memoria-equipo` viene en el repo (`.claude/
 ## Active Context
 
 **Load order:** this file → `{topic}/context.md` of the active topic → the files its document map marks `always` → only the files the task names. Never load `CHANGELOG.md`, `evidence/`, `archive/`, or a whole folder unless the task names the file.
-**Active topics:** `planificacion` (preguntas y fuentes cerradas; faltan arquitectura y reparto de trabajo) · `punto2-fuentes` (fuentes funcionando; faltan evidencias).
-**Known findings:** `findings.md` — 9 entries, last 2026-11-11. Open it only when the task touches a subject it covers.
+**Active topics:** `planificacion` (preguntas y fuentes cerradas; faltan arquitectura y reparto de trabajo) · `punto2-fuentes` (fuentes funcionando y documentadas en el Docx).
+**Known findings:** `findings.md` — 11 entries, last 2026-11-11. Open it only when the task touches a subject it covers.
 
-**Current state (2026-11-11):** Memoria en GitHub (`main`). Planificación en curso: alcance de datos, las 6 preguntas y el reparto de fuentes del Punto 2 decididos; límites de AWS Academy verificados por CLI. El Docx del enunciado (`SI3007-262-proyecto2.docx`, raíz del repo) tiene llenos integrantes, link del repo, Punto 1 y Punto 2. Repo con un directorio por punto; el Punto 2 funciona en AWS Academy: infraestructura, siembra y simulador (liberados 2024-01 a 2024-03; el resto queda para probar la ingesta). Entrega y sustentación presencial: **2026-11-19**.
+**Current state (2026-11-11):** Memoria en GitHub (`main`). Planificación en curso: alcance de datos, las 6 preguntas y el reparto de fuentes del Punto 2 decididos; límites de AWS Academy verificados por CLI. El Docx del enunciado (`SI3007-262-proyecto2.docx`, raíz del repo) tiene llenos integrantes, link del repo, Punto 1 y Punto 2 (con 6 figuras de evidencia y extractos de código). Repo con un directorio por punto; el Punto 2 funciona en AWS Academy: infraestructura, siembra y simulador (liberados 2024-01 a 2024-03; el resto queda para probar la ingesta). Entrega y sustentación presencial: **2026-11-19**.
 
-**Next up:** diseñar e implementar la ingesta automática (Punto 3); evidencias del Punto 2; cerrar las definiciones de P2 y P3; diseñar la arquitectura (ingesta automática, extracción desde RDS, orquestación); partir el trabajo en topics.
+**Next up:** diseñar e implementar la ingesta automática (Punto 3); cerrar las definiciones de P2 y P3; diseñar la arquitectura (ingesta automática, extracción desde RDS, orquestación); partir el trabajo en topics.
 **Known issues:** la extracción RDS → S3 con Glue JDBC necesita red de VPC no probada en Learner Lab (`planificacion/current/fuentes-de-datos.md` § Puntos abiertos). Las credenciales de Academy expiran con cada sesión del laboratorio. La EC2 y la RDS cobran mientras estén encendidas: `punto2-fuentes/infra/apagar_infra.py` al terminar.
 
 ## Conventions
