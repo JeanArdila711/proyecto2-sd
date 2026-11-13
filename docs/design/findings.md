@@ -67,3 +67,9 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
 - **Finding:** el repo y el Docx son públicos y la consola muestra el ID de cuenta en el menú y en los ARN, a veces dentro de iframes `about:blank` y con caracteres invisibles entre los dígitos. Antes de cada captura, reemplazar el ID en todos los frames y verificar que no quede; si queda, no guardar la captura. Revisar la imagen a ojo antes de usarla.
 - **Provenance:** primera tanda de capturas del Punto 2: el ARN de la EC2 se filtró hasta aplicar la máscara por frame (sesión 2026-11-11).
+
+## [hecho] AWS Academy: EventBridge → Lambda → SSM funciona con `LabRole`
+
+- **Date:** 2026-11-13 · **Source topic:** `punto3-ingesta`
+- **Finding:** con `LabRole` se puede crear una Lambda (Python 3.12, 2048 MB, 900 s), reservarle concurrencia (`put_function_concurrency` = 1), configurar `put_function_event_invoke_config` y programarla con una regla de EventBridge (`put_rule` + `add_permission` + `put_targets`, sin rol para EventBridge). Desde la Lambda, `ssm:SendCommand` y `GetCommandInvocation` contra la EC2 funcionan, igual que `ec2:DescribeInstances`, `ssm:GetParameter` y lectura y escritura en el bucket. Descarga de CloudFront de la TLC a S3 desde la Lambda: ~65–90 MB/s, ~450 MiB en 5–7 s.
+- **Provenance:** despliegue y corridas de `punto3-ingesta/desplegar.py` e `ingestar.py`, y una corrida programada a las 16:28 (sesión 2026-11-13, cuenta de Jean).

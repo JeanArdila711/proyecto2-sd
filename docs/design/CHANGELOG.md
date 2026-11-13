@@ -9,8 +9,16 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 - Decidido el layout de la zona raw (convención "Layout de la zona raw"): un prefijo por dataset con particiones Hive `year=/month=`, un Parquet por mes. Se descartó una sola clave `mes=YYYY-MM` porque filtrar por año es más incómodo.
 - Infraestructura del Punto 2 reproducida desde cero en la cuenta de Academy de Jean con los scripts del repo, sin tocar código: `crear_infra.py`, `sembrar.py` y el simulador de 2024-01 a 2024-03 (167.585 filas de green, igual que en la cuenta de David). El estado final es el mismo en las dos cuentas.
 
+### punto3-ingesta — ingesta automática implementada y probada (Jean)
+- Topic nuevo `punto3-ingesta`. Desplegada en la cuenta de Jean una regla de EventBridge cada 5 minutos que invoca la Lambda `tlc-ingesta`. La Lambda baja HVFHV por streaming de la TLC a S3 y lanza por SSM la ingesta de la EC2 (yellow desde archivos, green y `taxi_zones` desde MariaDB a Parquet). Todo cae en `raw/` con el layout de la convención.
+- Probado en AWS: la primera corrida dejó 12 archivos en 20 s y la segunda no subió nada. En la corrida programada, sin intervención manual, llegaron los 3 archivos de 2024-04 y green 2024-02, recargado con `--forzar`, se reemplazó. Green 2024-01 cuadra con el archivo de la TLC en filas, sumas y fechas.
+- Revisión propia (el subagente `revisor` no se pudo lanzar en modo auto por un hook que modifica el prompt): se corrigieron excepciones sin capturar en las subidas y las descargas.
+- Finding nuevo: qué permite Academy para EventBridge, Lambda y SSM.
+- Simulador de la cuenta de Jean en 2024-04.
+
 ### Files (proyecto2-sd, branch main)
-- `docs/design/CONTEXT.md`, `docs/design/README.md`, `docs/design/planificacion/context.md`, `docs/design/planificacion/current/fuentes-de-datos.md` (modified)
+- `docs/design/CONTEXT.md`, `docs/design/README.md`, `docs/design/findings.md`, `docs/design/planificacion/context.md`, `docs/design/planificacion/current/fuentes-de-datos.md`, `comun/config.py` (modified)
+- `punto3-ingesta/` (`raw.py`, `lambda_ingesta.py`, `ec2_ingesta.py`, `desplegar.py`, `ingestar.py`, `test_raw.py`, `README.md`), `docs/design/punto3-ingesta/context.md` (new)
 
 ## 2026-11-11
 

@@ -36,6 +36,11 @@ RECURSOS = {
     "param_mes_simulado": "/proyecto2-sd/simulacion/mes_actual",
     # Prefijo del bucket donde se publica el código que corre en la EC2 (fuera de las zonas del datalake)
     "s3_prefijo_codigo": "codigo/",
+    # Punto 3: ingesta automática
+    "lambda_ingesta": "tlc-ingesta",
+    "regla_ingesta": "tlc-ingesta-programada",
+    "ingesta_frecuencia": "rate(5 minutes)",
+    "ingesta_desde": "2024-01",  # primer mes del alcance de datos (convención "Alcance de datos")
 }
 
 URL_TLC = "https://d37ci6vzurychx.cloudfront.net"
