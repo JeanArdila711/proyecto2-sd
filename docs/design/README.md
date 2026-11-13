@@ -16,7 +16,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 |-------|---------|--------|
 | **1** — Caso de estudio y preguntas | Seis preguntas verificadas contra los datos; escrito en el Docx | In progress (`planificacion`) |
 | **2** — Fuentes de datos | RDS = zonas + green, EC2 = yellow, URL = HVFHV; infraestructura, siembra y simulador funcionando; Punto 2 del Docx con evidencias | In progress (`punto2-fuentes`) |
-| **3** — Ingesta automática a S3 | EventBridge → Lambda (HVFHV) + SSM a la EC2 (yellow, green, zonas) → `raw/`; corre sola, idempotente y probada en AWS. Faltan las evidencias del Docx | In progress (`punto3-ingesta`) |
+| **3** — Ingesta automática a S3 | EventBridge → Lambda (HVFHV) + SSM a la EC2 (yellow, green, zonas) → `raw/`; corre sola, idempotente y probada en AWS. Punto 3 del Docx con evidencias | In progress (`punto3-ingesta`) |
 | **4** — Preparación raw → trusted | Glue + Spark | Planned - no topic |
 | **5** — Catalogación | Glue Data Catalog + EMR/Hive | Planned - no topic |
 | **6** — Analítica SQL | Athena, Hive y SparkSQL respondiendo P1–P6 | Planned - no topic |

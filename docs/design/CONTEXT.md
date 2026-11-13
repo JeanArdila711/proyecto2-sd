@@ -29,12 +29,12 @@ Load by task, not all at once. Solo `memoria-equipo` viene en el repo (`.claude/
 ## Active Context
 
 **Load order:** this file → `{topic}/context.md` of the active topic → the files its document map marks `always` → only the files the task names. Never load `CHANGELOG.md`, `evidence/`, `archive/`, or a whole folder unless the task names the file.
-**Active topics:** `planificacion` (preguntas, fuentes y arquitectura de la ingesta cerradas; faltan P2/P3 y el reparto en topics) · `punto2-fuentes` (fuentes funcionando y documentadas en el Docx) · `punto3-ingesta` (ingesta funcionando en AWS; faltan evidencias del Docx).
+**Active topics:** `planificacion` (preguntas, fuentes y arquitectura de la ingesta cerradas; faltan P2/P3 y el reparto en topics) · `punto2-fuentes` (fuentes funcionando y documentadas en el Docx) · `punto3-ingesta` (ingesta funcionando en AWS y Punto 3 del Docx con evidencias; listo para cerrar con el visto bueno de Jean).
 **Known findings:** `findings.md` — 12 entries, last 2026-11-13. Open it only when the task touches a subject it covers.
 
 **Current state (2026-11-13):** Memoria en GitHub (`main`). Decididos el alcance de datos, las 6 preguntas, el reparto de fuentes, la arquitectura de la ingesta y el layout de raw (Conventions). El Docx del enunciado (`SI3007-262-proyecto2.docx`, raíz del repo) tiene llenos integrantes, link del repo, Punto 1 y Punto 2. El Punto 2 funciona en **dos cuentas de Academy** (David y Jean), cada una con su bucket, RDS y EC2, David con 2024-01 a 2024-03 liberados y Jean con 2024-01 a 2025-11. El Punto 3 corre en la cuenta de Jean (`punto3-ingesta/`): EventBridge cada 5 min → Lambda `tlc-ingesta` → `raw/`, con los 23 meses de yellow, green y HVFHV más `taxi_zones` (11,8 GiB), probado también en corrida automática. 2025-12 queda para la demo (Conventions). Todavía no se decide en qué cuenta corre la demo final. Entrega y sustentación presencial: **2026-11-19**.
 
-**Next up:** evidencias del Punto 3 en el Docx; cerrar las definiciones de P2 y P3; Punto 4 (raw → trusted con Glue y Spark) y partir los Puntos 4–8 en topics.
+**Next up:** revisar en Word el Punto 3 del Docx y cerrar el topic `punto3-ingesta`; cerrar las definiciones de P2 y P3; Punto 4 (raw → trusted con Glue y Spark) y partir los Puntos 4–8 en topics.
 **Known issues:** la regla de EventBridge sigue disparando con la infraestructura apagada (la parte de la EC2 se omite): `punto3-ingesta/desplegar.py --pausar` al terminar. Las credenciales de Academy expiran con cada sesión del laboratorio. La EC2 y la RDS cobran mientras estén encendidas: `punto2-fuentes/infra/apagar_infra.py` al terminar.
 
 ## Conventions

@@ -88,6 +88,19 @@ python punto3-ingesta/ingestar.py --estado
 
 Al terminar la sesión: `python punto3-ingesta/desplegar.py --pausar` y `python punto2-fuentes/infra/apagar_infra.py`.
 
+## Evidencias
+
+Son las capturas del Punto 3 en el documento de entrega (figuras 7 a 12). En las de la consola se ocultaron el ID de la cuenta, el usuario y el sufijo del bucket.
+
+| Figura | Qué muestra |
+|---|---|
+| [Lambda](evidencias/punto3-1-consola-lambda.png) | La función `tlc-ingesta` con su disparador de EventBridge |
+| [EventBridge](evidencias/punto3-2-consola-eventbridge.png) | La regla `tlc-ingesta-programada`, habilitada, cada 5 minutos |
+| [S3](evidencias/punto3-3-consola-s3-raw.png) | Las particiones `month=01` a `month=11` de HVFHV en 2025 |
+| [CloudWatch](evidencias/punto3-4-cloudwatch-corrida-automatica.png) | La corrida programada de las 21:28 UTC, que trajo 2024-04 sin intervención y reemplazó green 2024-02 |
+| [Carga completa](evidencias/punto3-5-terminal-carga-completa.png) | 19 meses liberados e ingeridos en 2 min 9 s |
+| [Reconciliación](evidencias/punto3-6-terminal-reconciliacion.png) | Green en raw contra la TLC y contra MariaDB, y el `cbd_congestion_fee` de 2025 |
+
 ## Resultados (2026-11-13)
 
 Primera corrida (manual), con 2024-01 a 2024-03 liberados: 12 archivos en 20 s.
