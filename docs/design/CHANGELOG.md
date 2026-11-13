@@ -2,6 +2,16 @@
 
 Newest first. One `##` heading per day with activity. Write outcomes, not implementation steps. This file is appended to, never rewritten, and is not loaded by default.
 
+## 2026-11-13
+
+### planificacion — arquitectura de la ingesta y layout de raw (Jean)
+- Decidida la ingesta automática del Punto 3 (convención "Ingesta automática"): Lambda para HVFHV, script en la EC2 por SSM para yellow y green, disparo con EventBridge. Se descartó Airflow porque la rúbrica no lo pide, MWAA no está verificado en Learner Lab y montarlo en una EC2 sumaba un servidor más a 6 días de la entrega. También se descartó Glue JDBC para la RDS por la red de VPC sin probar; la EC2 ya llega a MariaDB.
+- Decidido el layout de la zona raw (convención "Layout de la zona raw"): un prefijo por dataset con particiones Hive `year=/month=`, un Parquet por mes. Se descartó una sola clave `mes=YYYY-MM` porque filtrar por año es más incómodo.
+- Infraestructura del Punto 2 reproducida desde cero en la cuenta de Academy de Jean con los scripts del repo, sin tocar código: `crear_infra.py`, `sembrar.py` y el simulador de 2024-01 a 2024-03 (167.585 filas de green, igual que en la cuenta de David). El estado final es el mismo en las dos cuentas.
+
+### Files (proyecto2-sd, branch main)
+- `docs/design/CONTEXT.md`, `docs/design/README.md`, `docs/design/planificacion/context.md`, `docs/design/planificacion/current/fuentes-de-datos.md` (modified)
+
 ## 2026-11-11
 
 ### planificacion — Docx, límites de AWS y fuentes (David)

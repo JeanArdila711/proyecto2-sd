@@ -59,7 +59,7 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 ## [hecho] RDS MariaDB 11.8 exige TLS (`require_secure_transport=ON`)
 
 - **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
-- **Finding:** `tlc-mariadb` rechaza conexiones sin cifrar (`ERROR 3159`). pymysql conecta sin configurar nada, pero el cliente `mariadb` necesita `--ssl`, y la conexión JDBC de Glue (Punto 3) tendrá que activar SSL.
+- **Finding:** `tlc-mariadb` rechaza conexiones sin cifrar (`ERROR 3159`). pymysql conecta sin configurar nada, pero el cliente `mariadb` necesita `--ssl`, y cualquier conexión JDBC (por ejemplo, Glue o Spark leyendo la RDS) tendrá que activar SSL.
 - **Provenance:** consulta de evidencias desde la EC2 por SSM, sesión 2026-11-11.
 
 ## [regla] Capturas de la consola de AWS: enmascarar el ID de cuenta en todos los frames

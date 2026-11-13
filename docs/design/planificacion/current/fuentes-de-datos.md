@@ -33,5 +33,5 @@ Preguntas por fuente:
 
 ## Puntos abiertos
 
-- **Extracción desde RDS hacia S3:** primero Glue con conexión JDBC (la rúbrica nombra Glue). Requiere VPC: security group autorreferenciado y endpoint de S3, no probados en Learner Lab. Plan B: script Python con cron en la EC2. Se decide en el diseño de la ingesta (Punto 3).
+- ~~**Extracción desde RDS hacia S3**~~: decidida el 2026-11-13, ver `CONTEXT.md` § Conventions ("Ingesta automática").
 - **Opcional:** el shapefile de zonas (`taxi_zones.zip`, dato TLC) en la EC2, para mapas en el Punto 8.

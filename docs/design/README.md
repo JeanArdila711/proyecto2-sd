@@ -48,10 +48,11 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | Decision | Options | Status |
 |----------|---------|--------|
 | Qué datos van en RDS MariaDB y cuáles en archivos en EC2 | RDS = zonas + green, EC2 = yellow, URL = HVFHV (convención "Fuentes de datos") | Accepted |
-| Extracción RDS → S3 | Glue JDBC (requiere red de VPC) / script con cron en la EC2 | Proposed |
+| Extracción RDS → S3 | Script en la EC2 por SSM (convención "Ingesta automática"); Glue JDBC descartado | Accepted |
+| Layout de la zona raw | `raw/{dataset}/year=/month=/` (convención "Layout de la zona raw") | Accepted |
 | P2: qué tarifa se compara entre yellow y HVFHV | `fare_amount` vs `base_passenger_fare` / con recargos | Proposed |
 | P3: denominador del porcentaje que recibe el conductor | Tarifa base / todo lo que paga el pasajero | Proposed |
-| Orquestación del pipeline | Airflow / servicios nativos de AWS / otra | Proposed |
+| Orquestación del pipeline | Sin Airflow: EventBridge para la ingesta (convención "Ingesta automática"); Step Functions para encadenar los Puntos 4–5, por confirmar | Accepted |
 | Streamlit detrás de API Gateway | Proxy directo a Streamlit / API Gateway → Lambda → Athena consumida por Streamlit | Proposed |
 | Restricciones de AWS Academy | Verificadas por CLI (findings; convención "Roles de AWS Academy") | Accepted |
 
