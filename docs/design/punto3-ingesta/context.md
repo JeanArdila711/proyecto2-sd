@@ -17,6 +17,8 @@ _Every ruling passes the scope test when it is written (skill `memoria-equipo` �
 
 ## Journal (newest first)
 
+**2026-11-13, carga completa (Jean):** Liberados 2024-05 a 2025-11 e ingeridos en una invocación de 2 min 9 s. Raw con 23 meses por dataset (HVFHV 10,43 GiB, yellow 1,35 GiB, green 0,04 GiB). Green cuadra con MariaDB (1.203.357 filas) y el `cbd_congestion_fee` de 2025-06 con la TLC. 2025-12 se guarda para la demo.
+
 **2026-11-13 (Jean):** Implementada y desplegada en la cuenta de Jean: `raw.py`, `lambda_ingesta.py`, `ec2_ingesta.py`, `desplegar.py`, `ingestar.py`, `test_raw.py` y README. Primera corrida: 12 archivos en raw en 20 s (HVFHV a ~65–90 MB/s). La segunda no subió nada. Green de 2024-01 cuadra contra el archivo de la TLC (filas, sumas, fechas). Academy permite Lambda → SSM `SendCommand`, `put_function_concurrency` y la regla de EventBridge con `add_permission`. En la revisión propia se corrigieron excepciones sin capturar (`S3UploadFailedError`, descargas cortadas). Pendiente: evidencias del Docx.
 
 ## Document map

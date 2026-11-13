@@ -118,4 +118,5 @@ Zona raw
   green 2024-02: 53577 filas, 1.7 MiB -> raw/green/year=2024/month=02/green_tripdata_2024-02.parquet (reemplazado)
   green 2024-04: 56471 filas, 1.8 MiB -> raw/green/year=2024/month=04/green_tripdata_2024-04.parquet (nuevo)
   ```
+- **Carga completa:** con 2024-05 a 2025-11 liberados de una vez, una sola invocación de 2 min 9 s trajo los 19 meses de HVFHV (5–12 s cada uno) y los de yellow y green. Raw quedó con 23 archivos por dataset: HVFHV 10,43 GiB, yellow 1,35 GiB, green 0,04 GiB. Las filas de green en raw (1.203.357) son las mismas de MariaDB, y el `cbd_congestion_fee` de 2025-06 suma lo mismo que en la TLC (3.681,75). 2025-12 se guarda para liberarlo en vivo en la sustentación.
 - **Green de 2024-01 contra el archivo original de la TLC:** las mismas 56.551 filas, la misma suma de `total_amount` (1.266.922,59) y de `tip_amount`, y el mismo pickup mínimo.

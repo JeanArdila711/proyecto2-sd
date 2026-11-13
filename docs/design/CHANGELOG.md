@@ -14,7 +14,7 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 - Probado en AWS: la primera corrida dejó 12 archivos en 20 s y la segunda no subió nada. En la corrida programada, sin intervención manual, llegaron los 3 archivos de 2024-04 y green 2024-02, recargado con `--forzar`, se reemplazó. Green 2024-01 cuadra con el archivo de la TLC en filas, sumas y fechas.
 - Revisión propia (el subagente `revisor` no se pudo lanzar en modo auto por un hook que modifica el prompt): se corrigieron excepciones sin capturar en las subidas y las descargas.
 - Finding nuevo: qué permite Academy para EventBridge, Lambda y SSM.
-- Simulador de la cuenta de Jean en 2024-04.
+- Liberados e ingeridos 2024-01 a 2025-11 en la cuenta de Jean: el simulador tardó 75 s y la ingesta 2 min 9 s en una sola invocación (19 meses de HVFHV a 5–12 s cada uno). Raw: 23 archivos por dataset, 11,8 GiB. Green cuadra con MariaDB (1.203.357 filas), y `cbd_congestion_fee` de 2025-06 cuadra con la TLC. Convención nueva "2025-12 reservado para la demo".
 
 ### Files (proyecto2-sd, branch main)
 - `docs/design/CONTEXT.md`, `docs/design/README.md`, `docs/design/findings.md`, `docs/design/planificacion/context.md`, `docs/design/planificacion/current/fuentes-de-datos.md`, `comun/config.py` (modified)
