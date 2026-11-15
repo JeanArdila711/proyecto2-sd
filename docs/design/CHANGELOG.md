@@ -8,6 +8,7 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 - Jean revisó el Punto 3 del Docx en Word y lo aprobó; el topic `punto3-ingesta` queda Done.
 - Decidido que la demo final corre en la cuenta de Jean (convención "Cuenta de la demo"): ya tiene raw con 23 meses y la ingesta desplegada.
 - Finding nuevo: las subidas de boto3 fallan con `S3UploadFailedError`, no con `ClientError`.
+- Revertida la convención "2025-12 reservado para la demo" (antes: 2025-12 se liberaba en vivo en la sustentación; ahora: no hay demo de ingesta en vivo). Liberado e ingerido 2025-12 en la cuenta de Jean en una corrida: HVFHV 511 MiB en 5 s, yellow 4.305.006 filas, green 48.236 filas. Raw: 24 archivos por dataset, 12,4 GiB. Infraestructura apagada y regla deshabilitada al terminar.
 
 ## 2026-11-13
 
