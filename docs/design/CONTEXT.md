@@ -29,7 +29,7 @@ Load by task, not all at once. Solo `memoria-equipo` viene en el repo (`.claude/
 ## Active Context
 
 **Load order:** this file → `{topic}/context.md` of the active topic → the files its document map marks `always` → only the files the task names. Never load `CHANGELOG.md`, `evidence/`, `archive/`, or a whole folder unless the task names the file.
-**Active topics:** `planificacion` (preguntas, fuentes y arquitectura de la ingesta cerradas; faltan P2/P3 y el reparto en topics) · `punto2-fuentes` (fuentes funcionando y documentadas en el Docx).
+**Active topics:** `planificacion` (preguntas, fuentes y arquitectura de la ingesta cerradas; faltan P2/P3 y el reparto en topics) · `punto2-fuentes` (fuentes funcionando y documentadas en el Docx) · `punto4-trusted` (raw → trusted con Glue y Spark; research de RePPIT en curso).
 **Known findings:** `findings.md` — 13 entries, last 2026-11-15. Open it only when the task touches a subject it covers.
 
 **Current state (2026-11-15):** Memoria en GitHub (`main`). Decididos el alcance de datos, las 6 preguntas, el reparto de fuentes, la arquitectura de la ingesta, el layout de raw y la cuenta de la demo (Conventions). El Docx del enunciado (`SI3007-262-proyecto2.docx`, raíz del repo) tiene llenos integrantes, link del repo y los Puntos 1 a 3, revisado por Jean en Word. El Punto 2 funciona en **dos cuentas de Academy** (David y Jean): David con 2024-01 a 2024-03 liberados, Jean con los 24 meses. El Punto 3 está cerrado (topic `punto3-ingesta`, Done): EventBridge cada 5 min → Lambda `tlc-ingesta` → `raw/`, con los 24 meses de yellow, green y HVFHV más `taxi_zones` (12,4 GiB) en la cuenta de Jean. Entrega y sustentación presencial: **2026-11-19**.
