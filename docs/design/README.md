@@ -16,7 +16,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 |-------|---------|--------|
 | **1** — Caso de estudio y preguntas | Seis preguntas verificadas contra los datos; escrito en el Docx | In progress (`planificacion`) |
 | **2** — Fuentes de datos | RDS = zonas + green, EC2 = yellow, URL = HVFHV; infraestructura, siembra y simulador funcionando; Punto 2 del Docx con evidencias | In progress (`punto2-fuentes`) |
-| **3** — Ingesta automática a S3 | EventBridge → Lambda (HVFHV) + SSM a la EC2 (yellow, green, zonas) → `raw/`; corre sola, idempotente y probada en AWS. Punto 3 del Docx con evidencias | In progress (`punto3-ingesta`) |
+| **3** — Ingesta automática a S3 | EventBridge → Lambda (HVFHV) + SSM a la EC2 (yellow, green, zonas) → `raw/`; corre sola, idempotente y probada en AWS. Punto 3 del Docx con evidencias | Done (`punto3-ingesta`) |
 | **4** — Preparación raw → trusted | Glue + Spark | Planned - no topic |
 | **5** — Catalogación | Glue Data Catalog + EMR/Hive | Planned - no topic |
 | **6** — Analítica SQL | Athena, Hive y SparkSQL respondiendo P1–P6 | Planned - no topic |
@@ -29,7 +29,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 |-------|-------|--------|
 | [`planificacion`](planificacion/context.md) | Planificación del proyecto | In progress |
 | [`punto2-fuentes`](punto2-fuentes/context.md) | Fuentes de datos: infraestructura, siembra y simulador | In progress |
-| [`punto3-ingesta`](punto3-ingesta/context.md) | Ingesta automática a la zona raw | In progress |
+| [`punto3-ingesta`](punto3-ingesta/context.md) | Ingesta automática a la zona raw | Done |
 
 ## Documents
 
@@ -55,6 +55,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | P3: denominador del porcentaje que recibe el conductor | Tarifa base / todo lo que paga el pasajero | Proposed |
 | Orquestación del pipeline | Sin Airflow: EventBridge para la ingesta (convención "Ingesta automática"); Step Functions para encadenar los Puntos 4–5, por confirmar | Accepted |
 | Streamlit detrás de API Gateway | Proxy directo a Streamlit / API Gateway → Lambda → Athena consumida por Streamlit | Proposed |
+| Cuenta de la demo final | Jean (convención "Cuenta de la demo") | Accepted |
 | Restricciones de AWS Academy | Verificadas por CLI (findings; convención "Roles de AWS Academy") | Accepted |
 
 _States: **Proposed** (options listed, nothing chosen) · **Accepted** (chosen; the rationale goes in the CHANGELOG) · **Deprecated** (no longer relevant) · **Superseded** (replaced; link the new row)._

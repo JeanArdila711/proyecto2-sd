@@ -1,7 +1,7 @@
 # punto3-ingesta — Context
 
 **Tracker:** none
-**Status:** In progress · **Owner:** Jean
+**Status:** Done · **Owner:** Jean
 
 ## Orientation
 
@@ -16,6 +16,8 @@ Implementar la ingesta automática del Punto 3 según las convenciones "Ingesta 
 _Every ruling passes the scope test when it is written (skill `memoria-equipo` § Decisiones). Put a date in the bold label: the checker reads it._
 
 ## Journal (newest first)
+
+**2026-11-15, cierre (Jean):** Jean revisó el Punto 3 del Docx en Word y lo aprobó. Topic cerrado. Decidido que la demo corre en la cuenta de Jean (convención "Cuenta de la demo"). Finding nuevo sobre `S3UploadFailedError`. Sin documentos propios que archivar: el entregable es `punto3-ingesta/README.md` en la raíz del repo. `destruir_infra.py` sigue sin probarse, queda para el final del proyecto. Chequeo de cierre: ver la línea del reporte de esta sesión.
 
 **2026-11-13, evidencias (Jean):** Punto 3 del Docx lleno, con el formato del Punto 2: arquitectura, tabla de técnicas por fuente, zona raw, tabla de idempotencia, reproducción, figuras 7 a 12 y dos extractos de código. Las capturas de la consola de Lambda, EventBridge, S3 y CloudWatch se tomaron con el ID de cuenta, el usuario y el sufijo del bucket enmascarados en todos los frames, y se revisaron a ojo. Las dos figuras de terminal se renderizaron con la salida real de las corridas. Validación XSD del Docx: PASSED. No se pudo renderizar a PDF para verlo, porque no hay LibreOffice y el sandbox de Word bloquea el archivo; falta que Jean lo revise en Word. Figuras también en `punto3-ingesta/evidencias/`. Notas de Obsidian: runbook y dinámica del pipeline (commit del vault `c963dc3`). Los subagentes no se pudieron lanzar en modo auto por el hook de context-mode. Criterios de cierre del topic cumplidos; falta el visto bueno de Jean para cerrarlo.
 

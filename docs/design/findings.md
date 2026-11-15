@@ -73,3 +73,9 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-13 · **Source topic:** `punto3-ingesta`
 - **Finding:** con `LabRole` se puede crear una Lambda (Python 3.12, 2048 MB, 900 s), reservarle concurrencia (`put_function_concurrency` = 1), configurar `put_function_event_invoke_config` y programarla con una regla de EventBridge (`put_rule` + `add_permission` + `put_targets`, sin rol para EventBridge). Desde la Lambda, `ssm:SendCommand` y `GetCommandInvocation` contra la EC2 funcionan, igual que `ec2:DescribeInstances`, `ssm:GetParameter` y lectura y escritura en el bucket. Descarga de CloudFront de la TLC a S3 desde la Lambda: ~65–90 MB/s, ~450 MiB en 5–7 s.
 - **Provenance:** despliegue y corridas de `punto3-ingesta/desplegar.py` e `ingestar.py`, y una corrida programada a las 16:28 (sesión 2026-11-13, cuenta de Jean).
+
+## [regla] boto3: las subidas a S3 fallan con `S3UploadFailedError`, no con `ClientError`
+
+- **Date:** 2026-11-15 · **Source topic:** `punto3-ingesta`
+- **Finding:** `upload_file` y `upload_fileobj` (el transfer manager de boto3) envuelven el error de S3 en `boto3.exceptions.S3UploadFailedError`, que no hereda de `botocore.exceptions.ClientError`. Un `except ClientError` alrededor de una subida no la atrapa y el proceso se cae. Capturar las dos. Lo mismo con las descargas por streaming: una conexión cortada lanza `OSError` o `http.client.HTTPException`, no `urllib.error.URLError`.
+- **Provenance:** revisión del código de `punto3-ingesta/lambda_ingesta.py` y `ec2_ingesta.py` (sesión 2026-11-13); las dos capturas ya cubren estos casos.

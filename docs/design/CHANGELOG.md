@@ -2,6 +2,13 @@
 
 Newest first. One `##` heading per day with activity. Write outcomes, not implementation steps. This file is appended to, never rewritten, and is not loaded by default.
 
+## 2026-11-15
+
+### punto3-ingesta — topic cerrado (Jean)
+- Jean revisó el Punto 3 del Docx en Word y lo aprobó; el topic `punto3-ingesta` queda Done.
+- Decidido que la demo final corre en la cuenta de Jean (convención "Cuenta de la demo"): ya tiene raw con 23 meses y la ingesta desplegada.
+- Finding nuevo: las subidas de boto3 fallan con `S3UploadFailedError`, no con `ClientError`.
+
 ## 2026-11-13
 
 ### planificacion — arquitectura de la ingesta y layout de raw (Jean)
