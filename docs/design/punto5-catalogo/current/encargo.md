@@ -54,12 +54,12 @@ Entregable de la rúbrica: tablas SQL en el Glue Data Catalog y en EMR/Hive (`pl
 
 1. Una base de datos del catálogo con cinco tablas: `yellow`, `green`, `hvfhv`, `viajes` y `taxi_zones`, con sus particiones.
 2. Tablas consultables desde Athena, con un workgroup o una ubicación de resultados dentro del bucket, fuera de `raw/` y `trusted/`.
-3. Las mismas tablas visibles desde Hive en un cluster EMR. Una opción es usar el Glue Data Catalog como metastore de Hive, con la clasificación `hive-site` de EMR; *sin verificar*, hay que confirmarlo en la documentación de EMR antes de elegirlo. La otra es DDL propio en Hive.
+3. Las mismas tablas visibles desde Hive en un cluster EMR, usando el Glue Data Catalog como metastore (convención "Catalogación"). Antes de construirlo, confirmá en la documentación de EMR cómo se configura (clasificación `hive-site`, *sin verificar*). Si no funciona en Academy, avisale a Jean antes de pasar a DDL propio en Hive.
 4. Excluir los objetos `**_$folder$` que deja Glue dentro de las rutas de las tablas (`findings.md`), y no catalogar `trusted/_control/`.
 
-Decisiones que son de David, para registrar como ruling en `punto5-catalogo/context.md` y avisarle a Jean:
-- **Crawler o DDL.** El crawler es lo más "Glue" a la vista para la rúbrica, pero infiere tipos y particiones por su cuenta y corre como un recurso más de Glue. El DDL (Athena o `glue.create_table` con el esquema de `contrato.py`) es determinista e idempotente. Cualquiera de las dos sirve si el resultado es el mismo en las dos cuentas.
-- **Particiones.** `MSCK REPAIR TABLE`, `batch_create_partition` o partition projection. Con projection no hay que registrar meses nuevos cuando llega uno.
+Cómo se cataloga ya está decidido (convención "Catalogación" en CONTEXT): tablas con `glue.create_table` desde `contrato.py`, particiones con `batch_create_partition` a partir de los controles, y un paso nuevo al final de la state machine `tlc-preparacion` que registra las particiones nuevas. No se usa crawler ni partition projection. Lo que sigue abierto es de David:
+- Los nombres de la base de datos y del workgroup de Athena, en `RECURSOS`.
+- Cómo se integra el paso en la state machine. La definición vive en `punto4-preparacion/desplegar.py`, que es del Punto 4: el cambio lo hace David y lo revisa Jean antes del merge. El paso tiene que ser idempotente y no fallar si no hay nada nuevo.
 
 **Verificación:** en Athena, `count(*)` por tabla y por partición tiene que dar lo mismo que `filas_detalle` y `filas_viajes` de los controles de la muestra. La misma cuenta desde Hive en EMR, sobre al menos una tabla. Las capturas para el README van con el ID de cuenta enmascarado.
 

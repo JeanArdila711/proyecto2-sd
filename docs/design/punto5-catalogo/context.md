@@ -9,7 +9,7 @@ Punto 5 de la rúbrica: tablas SQL sobre `trusted/` en el Glue Data Catalog y en
 
 ## Rulings
 
-_Ninguno todavía. Crawler o DDL y la forma de registrar particiones son decisiones de David (`current/encargo.md` § Fase B)._
+- **Cómo se cataloga (Jean, 2026-11-16 13:00):** Verdict: per project CONTEXT Conventions ("Catalogación"). Topic detail: los nombres de la base de datos y del workgroup, y la integración del paso en la state machine, quedan en manos de David, con revisión de Jean.
 
 _Every ruling passes the scope test when it is written (skill `memoria-equipo` § Decisiones). Put a date in the bold label: the checker reads it._
 
