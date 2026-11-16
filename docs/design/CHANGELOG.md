@@ -8,6 +8,7 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 - Verificadas en AWS las fases 2 a 4: un `--forzar` toca solo su mes, la ingesta dispara la preparación y no arranca una segunda ejecución si ya hay una en curso. Costo acumulado de Glue en la cuenta nueva: ~6 DPU-hora (~USD 2,64).
 - Fase 5: `trusted/viajes` en el contrato y el job, probada en green 2024-01 (raw = detalle = viajes). Recarga de los 72 meses lanzada.
 - Recarga completa terminada a las 17:25 (~4 h 41 min, ~7,3 DPU-hora, ~USD 3,2): 73 controles con raw = detalle = viajes. Yellow tiene 89,9 M filas, green 1,25 M y HVFHV 483 M.
+- Obsidian: la nota "Proyecto 2 - Dinámica del pipeline" explica el Punto 4 para la sustentación (job, dos salidas, banderas, columnas descartadas, workers y jobs de Glue). El hub del proyecto quedó al día.
 - Dos findings: marcadores `_$folder$` de Glue en trusted, y la EC2 encendida al iniciar el lab.
 - Como el profesor no responde, Glue queda en 2 workers y un job a la vez.
 
