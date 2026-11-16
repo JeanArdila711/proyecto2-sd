@@ -101,5 +101,5 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 ## [hecho] AWS Academy: "Start Lab" vuelve a encender la EC2 detenida
 
 - **Date:** 2026-11-16 · **Source topic:** `punto4-trusted`
-- **Finding:** la EC2 `tlc-fuente-archivos`, detenida el día anterior con `apagar_infra.py`, apareció `running`, con `LaunchTime` 2026-11-16 12:27 (hora local), cerca de cuando Jean inició el lab. La RDS siguió detenida. Que la encienda "Start Lab" es una inferencia, no está verificada en la documentación de Academy. Después de cada "Start Lab" hay que revisar la EC2 y apagarla si no se va a usar, porque cobra.
+- **Finding:** la EC2 `tlc-fuente-archivos`, detenida el día anterior con `apagar_infra.py`, apareció `running`, con `LaunchTime` 2026-11-16 12:27 (hora local), cerca de cuando Jean inició el lab. Se repitió ese mismo día: Jean le dio "Start Lab" a las 14:46 con la EC2 detenida y su `LaunchTime` quedó en 14:46. La RDS siguió detenida las dos veces. No está documentado por Academy, pero se observó dos veces. Después de cada "Start Lab" hay que revisar la EC2 y apagarla si no se va a usar, porque cobra.
 - **Provenance:** `aws ec2 describe-instances` y `aws rds describe-db-instances` en la cuenta del segundo curso de Jean, 2026-11-16.

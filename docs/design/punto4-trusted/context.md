@@ -15,6 +15,8 @@ _Every ruling passes the scope test when it is written (skill `memoria-equipo` �
 
 ## Journal (newest first)
 
+**2026-11-16, tarde (Jean):** La recarga de los 72 meses con `viajes` terminó: `--estado` dio 0 pendientes y 73 controles con raw = detalle = viajes, y en HVFHV 2025-06 `sin_zona` es 0. La fase 5 queda verificada (`working/plan.md`, notas de la sesión 2). Siguiente: fase 6 (README y evidencias). design_check: 0 FAIL, 0 WARN.
+
 **2026-11-16, implement, sesión 2 (Jean):** Verificaciones manuales de las fases 2 a 4 hechas con evidencia: `--forzar` y encadenamiento solo tocan su mes, y la segunda invocación no arranca otra ejecución. Fase 5 implementada (contrato, job y `--estado`), revisada por el `revisor` y probada en green 2024-01: raw = detalle = viajes. Recarga de los 72 meses con `viajes` lanzada (~4 h). Detalle en `working/plan.md` § Notas de implementación. Siguiente: `--estado`, fase 6 y review.
 
 **2026-11-16, implement (Jean):** Fases 0, 1 y 4 hechas y la 2 desplegada. La cuenta del primer curso se desactivó por correr tres jobs de Glue a la vez, y se replicó todo en la cuenta del segundo curso. La capa de detalle de trusted está completa: 73 controles, raw = detalle, idempotente. Todo con un job a la vez y 2 workers, hasta conocer los límites de Glue de Vocareum. El estado fino está en `working/plan.md` § Notas de implementación. Siguiente: dos verificaciones cortas y la fase 5 (`viajes`).

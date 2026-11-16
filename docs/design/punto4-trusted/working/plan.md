@@ -280,15 +280,15 @@ Segunda salida del mismo job (proposal § Dirección elegida, ajuste 1).
 
 - [x] 5.1 Columnas de `viajes` y mapeo de `compania` en el contrato; asserts nuevos en el test: cada columna de `viajes` tiene origen en los tres servicios o es NULL a propósito, y no hay columnas de `TARIFA` repetidas entre componentes de un servicio — `punto4-preparacion/contrato.py`, `punto4-preparacion/test_contrato.py` [independiente]
 - [x] 5.2 Paso 5 de § Glue job: proyección, componentes, join broadcast con zonas, escritura en `trusted/viajes/servicio=X/year=/month=/` y `filas_viajes` y `sin_zona` en el control — `punto4-preparacion/preparar.py` [depende de 5.1]
-- [ ] 5.3 Redesplegar, correr green 2024-01 con `--forzar`, revisar y después `--forzar --todo` para los 72 meses [depende de 5.2]
+- [x] 5.3 Redesplegar, correr green 2024-01 con `--forzar`, revisar y después `--forzar --todo` para los 72 meses [depende de 5.2]
 
 Verificación automática:
 - [x] `.venv/bin/python punto4-preparacion/test_contrato.py` → `ok`
-- [ ] `preparar_local.py --estado`: 0 pendientes y `filas_raw == filas_detalle == filas_viajes` en los 72 meses.
+- [x] `preparar_local.py --estado`: 0 pendientes y `filas_raw == filas_detalle == filas_viajes` en los 72 meses.
 
 Verificación manual:
 - [x] En el control de green 2024-01, `sin_zona` es 0 y las banderas coinciden con las de la fase 1.
-- [ ] En el control de un mes de HVFHV, `filas_viajes` es igual a `filas_detalle`.
+- [x] En el control de un mes de HVFHV, `filas_viajes` es igual a `filas_detalle`.
 
 ## Fase 6: README y evidencias
 El Punto 4 queda reproducible desde el repo (Docx ¶26).
@@ -402,3 +402,6 @@ Verificación manual:
 - `--forzar --todo` lanzado el 2026-11-16 ~12:45, de a un job, ~4 h. Al terminar: `--estado` y marcar 5.3 y la verificación de los 72 meses.
 - La escritura de Glue deja marcadores `_$folder$` de 0 bytes (`trusted/green/year=2024_$folder$`); quedan para el Punto 5 (`findings.md`).
 - "Start Lab" encendió la EC2 detenida y se volvió a apagar (`findings.md`).
+- Recarga completa terminada: ejecución SUCCEEDED en 16.848 s (~4 h 41 min), de 12:44 a 17:25. `--estado`: 0 pendientes, 73 controles, sin diferencias (exit 0). Totales: green 1.251.593, hvfhv 483.060.132, yellow 89.892.322 y taxi_zones 265, con raw = detalle = viajes en los 72 meses de servicio. Control de hvfhv 2025-06: 19.868.009 filas en raw, detalle y viajes, y `sin_zona` 0.
+- Tiempo de Glue de la recarga: ~219 min de ejecución, ~7,3 DPU-hora, unos USD 3,2 (G.1X con 2 workers, a USD 0,44 por DPU-hora).
+- "Start Lab" volvió a encender la EC2 a las 14:46, y se apagó otra vez. Es la segunda vez que pasa.
