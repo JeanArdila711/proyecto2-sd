@@ -2,6 +2,14 @@
 
 Newest first. One `##` heading per day with activity. Write outcomes, not implementation steps. This file is appended to, never rewritten, and is not loaded by default.
 
+## 2026-11-16
+
+### punto4-trusted — implementación, capa de detalle (Jean)
+- Plan de RePPIT aprobado y escrito; código del Punto 4 en `punto4-preparacion/`: contrato, Glue job, Lambda de pendientes, state machine `tlc-preparacion` y encadenamiento desde `tlc-ingesta`.
+- `LabRole` permite Glue 5.0 y Step Functions con `glue:startJobRun.sync`, también `StartExecution` desde la Lambda; no hace falta plan B (finding nuevo).
+- La cuenta de Academy del primer curso de Jean quedó desactivada al correr tres jobs de Glue a la vez (finding nuevo). Revertida la convención "Cuenta de la demo" (antes: cuenta del primer curso de Jean; ahora: cuenta del segundo curso). Puntos 2 y 3 replicados en la cuenta nueva, raw completo.
+- Trusted, capa de detalle completa: 72 meses más `taxi_zones`, raw = detalle en los 73 controles, una ejecución de 3 h 50 min con un job a la vez y 2 workers; una segunda ejecución no lanza jobs.
+
 ## 2026-11-15
 
 ### punto3-ingesta — topic cerrado (Jean)

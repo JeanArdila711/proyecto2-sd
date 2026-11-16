@@ -1,7 +1,7 @@
 # Proyecto 2 Big Data TLC — Agent Context
 
 > **Purpose:** Orient any agent working on this project. Read this first, then stop as soon as the task is clear.
-> **Last updated:** 2026-11-15
+> **Last updated:** 2026-11-16
 
 ## Skills
 
@@ -29,13 +29,13 @@ Load by task, not all at once. Solo `memoria-equipo` viene en el repo (`.claude/
 ## Active Context
 
 **Load order:** this file → `{topic}/context.md` of the active topic → the files its document map marks `always` → only the files the task names. Never load `CHANGELOG.md`, `evidence/`, `archive/`, or a whole folder unless the task names the file.
-**Active topics:** `planificacion` (preguntas, fuentes y arquitectura de la ingesta cerradas; faltan P2/P3 y el reparto en topics) · `punto2-fuentes` (fuentes funcionando y documentadas en el Docx) · `punto4-trusted` (raw → trusted con Glue y Spark; research y propuesta de RePPIT hechos, sigue el plan).
-**Known findings:** `findings.md` — 13 entries, last 2026-11-15. Open it only when the task touches a subject it covers.
+**Active topics:** `planificacion` (preguntas, fuentes y arquitectura de la ingesta cerradas; faltan P2/P3 y el reparto en topics) · `punto2-fuentes` (fuentes funcionando y documentadas en el Docx) · `punto4-trusted` (Implement de RePPIT: capa de detalle de trusted completa en AWS; faltan `viajes`, dos pruebas cortas y el README).
+**Known findings:** `findings.md` — 15 entries, last 2026-11-15. Open it only when the task touches a subject it covers.
 
-**Current state (2026-11-15):** Memoria en GitHub (`main`). Decididos el alcance de datos, las 6 preguntas, el reparto de fuentes, la arquitectura de la ingesta, el layout de raw y la cuenta de la demo (Conventions). El Docx del enunciado (`SI3007-262-proyecto2.docx`, raíz del repo) tiene llenos integrantes, link del repo y los Puntos 1 a 3, revisado por Jean en Word. El Punto 2 funciona en **dos cuentas de Academy** (David y Jean): David con 2024-01 a 2024-03 liberados, Jean con los 24 meses. El Punto 3 está cerrado (topic `punto3-ingesta`, Done): EventBridge cada 5 min → Lambda `tlc-ingesta` → `raw/`, con los 24 meses de yellow, green y HVFHV más `taxi_zones` (12,4 GiB) en la cuenta de Jean. Entrega y sustentación presencial: **2026-11-19**.
+**Current state (2026-11-16):** Memoria en GitHub (`main`). Decididos el alcance de datos, las 6 preguntas, el reparto de fuentes, la arquitectura de la ingesta, el layout de raw y la cuenta de la demo (Conventions). El Docx del enunciado (`SI3007-262-proyecto2.docx`, raíz del repo) tiene llenos integrantes, link del repo y los Puntos 1 a 3, revisado por Jean en Word. El Punto 2 funciona en **dos cuentas de Academy** (David y Jean): David con 2024-01 a 2024-03 liberados, Jean con los 24 meses. El Punto 3 está cerrado (topic `punto3-ingesta`, Done): EventBridge cada 5 min → Lambda `tlc-ingesta` → `raw/`, con los 24 meses de yellow, green y HVFHV más `taxi_zones` (12,4 GiB) en la cuenta del primer curso de Jean, que quedó desactivada; se replicaron los Puntos 2 y 3 en la cuenta del segundo curso (convención "Cuenta de la demo"). El Punto 4 tiene la capa de detalle de trusted completa en la cuenta nueva (`trusted/{yellow,green,hvfhv}` y `taxi_zones`, 73 controles, raw = detalle). Entrega y sustentación presencial: **2026-11-19**.
 
-**Next up:** plan de RePPIT del Punto 4 (`/reppit-plan punto4-trusted`) e implementarlo; cerrar las definiciones de P2 y P3 (David); partir los Puntos 5–8 en topics.
-**Known issues:** en la cuenta de la demo (segundo curso de Jean) la regla de EventBridge está deshabilitada desde el 2026-11-15, después de replicar raw; reanudarla encadena jobs de Glue. Mientras no se conozcan los límites de Glue del curso, **nunca más de un job de Glue a la vez** (ver `findings.md`). Para retomar: `crear_infra.py` y `desplegar.py`. Sin pausarla, la regla sigue disparando con la infraestructura apagada (la parte de la EC2 se omite): `punto3-ingesta/desplegar.py --pausar` al terminar. Las credenciales de Academy expiran con cada sesión del laboratorio. La EC2 y la RDS cobran mientras estén encendidas: `punto2-fuentes/infra/apagar_infra.py` al terminar.
+**Next up:** seguir `/reppit-implement punto4-trusted` desde las verificaciones pendientes (fases 2–4) y la fase 5 (`trusted/viajes`); pedir al profesor los límites de Glue del curso; cerrar las definiciones de P2 y P3 (David); partir los Puntos 5–8 en topics.
+**Known issues:** en la cuenta de la demo (segundo curso de Jean) la regla de EventBridge está deshabilitada desde el 2026-11-15, después de replicar raw; reanudarla encadena jobs de Glue. Mientras no se conozcan los límites de Glue del curso, **nunca más de un job de Glue a la vez** (ver `findings.md`). La EC2 y la RDS de la cuenta nueva están detenidas. Para retomar: `crear_infra.py` y `desplegar.py`. Las credenciales de la sesión van en un archivo del scratchpad con `AWS_SHARED_CREDENTIALS_FILE` (el perfil `academy` no está en `~/.aws`). Sin pausarla, la regla sigue disparando con la infraestructura apagada (la parte de la EC2 se omite): `punto3-ingesta/desplegar.py --pausar` al terminar. Las credenciales de Academy expiran con cada sesión del laboratorio. La EC2 y la RDS cobran mientras estén encendidas: `punto2-fuentes/infra/apagar_infra.py` al terminar.
 
 ## Conventions
 
