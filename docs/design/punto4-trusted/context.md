@@ -9,9 +9,13 @@ Punto 4 de la rúbrica: preparación de datos de `raw/` a `trusted/` con AWS Glu
 
 ## Rulings
 
+- **Diseño de trusted (Jean, 2026-11-15 19:30):** un Glue job escribe dos salidas por (dataset, mes), con la misma partición que raw: `trusted/{yellow,green,hvfhv}` (detalle, con todas las filas y banderas de calidad) y `trusted/viajes/servicio=` (común, con zonas desnormalizadas y la tarifa separada en componentes). Una state machine lanza solo lo que cambió, y la dispara la Lambda de ingesta. Se construye primero el detalle y después `viajes`. Discussion: `working/proposal.md` § Dirección elegida.
+
 _Every ruling passes the scope test when it is written (skill `memoria-equipo` § Decisiones). Put a date in the bold label: the checker reads it._
 
 ## Journal (newest first)
+
+**2026-11-15, propuesta (Jean):** Dos propuestas y una combinación en `working/proposal.md`. Jean eligió la combinación con dos ajustes (ruling "Diseño de trusted"). Siguiente: plan.
 
 **2026-11-15 (Jean):** Topic abierto. Research de RePPIT escrito en `working/research.md` (esquemas reales de raw leídos de los footers, requisitos, calidad, patrones y Glue en Academy). Falta que Jean lo revise antes de la propuesta.
 
@@ -21,4 +25,5 @@ The map is the listing for this folder. One row per file; folders give the lifec
 
 | File | Role | Load | What it holds |
 |------|------|------|---------------|
+| `working/proposal.md` | draft | on-demand | Dos propuestas de RePPIT: tres tablas con banderas frente a tabla unificada con cuarentena |
 | `working/research.md` | draft | on-demand | Research de RePPIT: raw tal como está, requisitos, calidad, patrones del repo y Glue en Academy |

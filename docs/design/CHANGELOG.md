@@ -11,7 +11,7 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 - Revertida la convención "2025-12 reservado para la demo" (antes: 2025-12 se liberaba en vivo en la sustentación; ahora: no hay demo de ingesta en vivo). Liberado e ingerido 2025-12 en la cuenta de Jean en una corrida: HVFHV 511 MiB en 5 s, yellow 4.305.006 filas, green 48.236 filas. Raw: 24 archivos por dataset, 12,4 GiB. Infraestructura apagada y regla deshabilitada al terminar.
 
 ### punto4-trusted — topic abierto (Jean)
-- Topic nuevo `punto4-trusted` para el Punto 4, diseñado con RePPIT.
+- Topic nuevo `punto4-trusted` para el Punto 4, diseñado con RePPIT. Research y propuesta escritos. Se eligió la combinación: tres tablas de detalle por servicio con banderas, más una tabla común `viajes`, en la misma pasada, encadenadas desde la ingesta por Step Functions (ruling "Diseño de trusted"). Se descartó la tabla única con cuarentena porque obligaba a decidir P2 y P3 en trusted.
 
 ## 2026-11-13
 
