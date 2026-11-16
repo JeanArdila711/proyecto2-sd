@@ -234,12 +234,12 @@ Verificación manual:
   - orden determinista (dataset, mes);
   - workers según el dict.
 - [x] 2.3 Handler que lista `raw/` y `trusted/_control/` con paginador y devuelve `{"pendientes": [...]}` — `punto4-preparacion/lambda_pendientes.py` [depende de 2.1]
-- [ ] 2.4 En `desplegar.py`: upsert de la Lambda `tlc-preparacion-pendientes` (zip con `lambda_pendientes.py` y `pendientes.py`, env `BUCKET` y `WORKERS` en JSON) y de la state machine `tlc-preparacion` (§ State machine; `list_state_machines` por nombre → `update_state_machine` o `create_state_machine` con tags). `--borrar` borra la state machine, la Lambda y el job — `punto4-preparacion/desplegar.py` [depende de 2.3]
+- [x] 2.4 En `desplegar.py`: upsert de la Lambda `tlc-preparacion-pendientes` (zip con `lambda_pendientes.py` y `pendientes.py`, env `BUCKET` y `WORKERS` en JSON) y de la state machine `tlc-preparacion` (§ State machine; `list_state_machines` por nombre → `update_state_machine` o `create_state_machine` con tags). `--borrar` borra la state machine, la Lambda y el job — `punto4-preparacion/desplegar.py` [depende de 2.3]
 - [x] 2.5 CLI local: `--estado` (pendientes con la misma función más un resumen de los controles), `--ejecutar`, `--forzar --dataset --mes` y `--forzar --todo`. Termina con `sys.exit(0/1)` según el resultado de la ejecución, que espera con `describe_execution` — `punto4-preparacion/preparar_local.py` [depende de 2.1]
 
 Verificación automática:
 - [x] `.venv/bin/python punto4-preparacion/test_pendientes.py` → `ok`
-- [ ] `.venv/bin/python punto4-preparacion/desplegar.py` dos veces seguidas sin errores.
+- [x] `.venv/bin/python punto4-preparacion/desplegar.py` dos veces seguidas sin errores.
 
 Verificación manual:
 - [ ] `preparar_local.py --estado` lista como pendientes todo menos lo corrido en la fase 1.
@@ -263,12 +263,12 @@ Verificación manual:
 ## Fase 4: Dimensionar y hacer la carga completa
 Los 72 meses en la capa de detalle, con tiempos y costo medidos.
 
-- [ ] 4.1 HVFHV 2025-12 (22,1 M filas, el más grande) con `--forzar` y 10 workers. Anotar la duración y los DPU-hora de `get-job-run` (`ExecutionTime`, `DPUSeconds` si viene). Con eso fijar `glue_workers` de hvfhv y yellow en `RECURSOS`, buscando que un mes de HVFHV tarde menos de 15 min, y estimar el costo total — `comun/config.py`, `docs/design/findings.md` [independiente]
-- [ ] 4.2 `preparar_local.py --ejecutar` hasta 0 pendientes. Evidencias: consola de la state machine con el `Map` y consola de S3 en `trusted/` — sin archivos [depende de 4.1]
-- [ ] 4.3 Agregar en `--estado` una tabla de los controles: por dataset, meses, filas de raw, filas de detalle y suma de banderas — `punto4-preparacion/preparar_local.py` [depende de 4.2]
+- [x] 4.1 HVFHV 2025-12 (22,1 M filas, el más grande) con `--forzar` y 10 workers. Anotar la duración y los DPU-hora de `get-job-run` (`ExecutionTime`, `DPUSeconds` si viene). Con eso fijar `glue_workers` de hvfhv y yellow en `RECURSOS`, buscando que un mes de HVFHV tarde menos de 15 min, y estimar el costo total — `comun/config.py`, `docs/design/findings.md` [independiente]
+- [x] 4.2 `preparar_local.py --ejecutar` hasta 0 pendientes. Evidencias: consola de la state machine con el `Map` y consola de S3 en `trusted/` — sin archivos [depende de 4.1]
+- [x] 4.3 Agregar en `--estado` una tabla de los controles: por dataset, meses, filas de raw, filas de detalle y suma de banderas — `punto4-preparacion/preparar_local.py` [depende de 4.2]
 
 Verificación automática:
-- [ ] `.venv/bin/python punto4-preparacion/preparar_local.py --estado`: 0 pendientes, 73 controles y `filas_raw == filas_detalle` en todos. Termina con código 0, o 1 si hay alguna diferencia.
+- [x] `.venv/bin/python punto4-preparacion/preparar_local.py --estado`: 0 pendientes, 73 controles y `filas_raw == filas_detalle` en todos. Termina con código 0, o 1 si hay alguna diferencia.
 
 Verificación manual:
 - [ ] `--ejecutar` otra vez: el `Map` recibe 0 elementos y no se lanza ningún job (consola de Glue sin corridas nuevas).
@@ -363,4 +363,25 @@ Verificación manual:
   - `duracion_min` sale `double`.
   - Al repetir green 2024-01, la partición quedó con 1 archivo nuevo del mismo tamaño, sin duplicados.
   - Sin verificar: que `cbd_congestion_fee` sea NULL en 2024 y tenga valores en 2025. El control no cuenta nulos; se ve con Athena en el Punto 5.
+
+**2026-11-16, carga completa (cuenta nueva):**
+- HVFHV 2025-12, solo y con 2 workers: 227 s y 455 DPU-s, 22.108.438 filas en 2 archivos. Se dejó `glue_workers` en 2 para todo (4.1), por los límites desconocidos de Vocareum. El investigador no encontró valores publicados; solo el mecanismo ("Glue Max Workers", "Glue Max Concurrent jobs", "Glue Worker Types"). Hay que pedírselos al profesor.
+- Carga completa con una ejecución de `tlc-preparacion` (68 meses, de a uno, 2 workers): **SUCCEEDED en 13.795 s (3 h 50 min)**, sin ningún job fallido. A mitad de la carga se reinició la sesión del lab ("Start Lab") y la carga siguió sin cortes, con las mismas credenciales.
+- `--estado`: 0 pendientes, 73 controles, raw = detalle en todos:
+
+  | Dataset | Filas | Banderas principales |
+  |---|---|---|
+  | green | 1.251.593 | `distancia_invalida` 4,71 %, `zona_desconocida` 1,42 % |
+  | hvfhv | 483.060.132 | `pago_mayor_a_tarifa` 12,88 %, `zona_desconocida` 4,37 %, `espera_negativa` 1,06 %, `fuera_de_mes` 0 |
+  | yellow | 89.892.322 | `monto_negativo` 3,99 %, `distancia_invalida` 2,42 % |
+  | `taxi_zones` | 265 | — |
+
+- Idempotencia: una segunda `--ejecutar` terminó SUCCEEDED en 30 s y no lanzó ningún job (74 corridas de Glue antes y después).
+- La EC2 y la RDS de la cuenta nueva quedaron detenidas (`apagar_infra.py`). La regla de ingesta sigue pausada.
+- Faltan:
+  - fase 2, verificación manual de `--forzar` de un mes;
+  - fase 3, verificación manual del encadenamiento: borrar un control y correr `ingestar.py`;
+  - fase 4, `--forzar` de yellow 2024-06;
+  - fases 5 (`viajes`, que reprocesa los 72 meses, ~4 h con 2 workers) y 6;
+  - la limpieza de `tlc-prueba-permisos` no aplica: esos recursos estaban en la cuenta desactivada.
 
