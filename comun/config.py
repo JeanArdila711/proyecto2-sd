@@ -41,6 +41,17 @@ RECURSOS = {
     "regla_ingesta": "tlc-ingesta-programada",
     "ingesta_frecuencia": "rate(5 minutes)",
     "ingesta_desde": "2024-01",  # primer mes del alcance de datos (convención "Alcance de datos")
+    # Punto 4: preparación raw -> trusted
+    "glue_job_preparacion": "tlc-preparacion",
+    "lambda_pendientes": "tlc-preparacion-pendientes",
+    "sm_preparacion": "tlc-preparacion",
+    "trusted_prefijo": "trusted/",
+    "control_prefijo": "trusted/_control/",
+    # Workers G.1X por dataset (mínimo de Glue Spark: 2). Todos en 2 mientras no se conozcan los límites de
+    # Glue de Vocareum: 2 workers y un job a la vez es lo único que corrió sin desactivar la cuenta (findings.md).
+    "glue_workers": {"taxi_zones": 2, "green": 2, "yellow": 2, "hvfhv": 2},
+    # 1: varios jobs de Glue a la vez desactivaron la cuenta de Academy (findings.md, 2026-11-15)
+    "preparacion_concurrencia": 1,  # MaxConcurrency del Map y MaxConcurrentRuns del job
 }
 
 URL_TLC = "https://d37ci6vzurychx.cloudfront.net"

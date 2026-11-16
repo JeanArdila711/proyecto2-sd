@@ -79,3 +79,15 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-15 · **Source topic:** `punto3-ingesta`
 - **Finding:** `upload_file` y `upload_fileobj` (el transfer manager de boto3) envuelven el error de S3 en `boto3.exceptions.S3UploadFailedError`, que no hereda de `botocore.exceptions.ClientError`. Un `except ClientError` alrededor de una subida no la atrapa y el proceso se cae. Capturar las dos. Lo mismo con las descargas por streaming: una conexión cortada lanza `OSError` o `http.client.HTTPException`, no `urllib.error.URLError`.
 - **Provenance:** revisión del código de `punto3-ingesta/lambda_ingesta.py` y `ec2_ingesta.py` (sesión 2026-11-13); las dos capturas ya cubren estos casos.
+
+## [hecho] Academy: `LabRole` alcanza para Glue 5.0 y Step Functions con `glue:startJobRun.sync`
+
+- **Date:** 2026-11-15 · **Source topic:** `punto4-trusted`
+- **Finding:** con `LabRole` funcionan `glue:CreateJob` (Glue 5.0, `G.1X` × 2), `StartJobRun` y `GetJobRun`; `states:CreateStateMachine` con `LabRole` como rol; y una ejecución STANDARD con `arn:aws:states:::glue:startJobRun.sync` que espera el job hasta SUCCEEDED. Desde una Lambda con `LabRole`, `states:ListExecutions` y `states:StartExecution` están permitidos, así que la ingesta puede encadenar la preparación. La salida de `.sync` trae en la raíz `Id`, `JobRunState`, `ExecutionTime`, `DPUSeconds`, `NumberOfWorkers` y `GlueVersion`. Un job de 2 líneas en Glue 5.0 tardó 40 s de ejecución y facturó 81 DPU-segundos. Si un `startJobRun` llega justo cuando termina la corrida anterior de un job con `MaxConcurrentRuns` lleno, Glue responde `ConcurrentRunsExceededException` aunque el `get-job-run` anterior ya diga SUCCEEDED; la tarea necesita `Retry` para ese error.
+- **Provenance:** prueba de la fase 0 del plan del Punto 4 (recursos `tlc-prueba-permisos`, sesión 2026-11-15, cuenta de Jean).
+
+## [hecho] Academy: correr varios jobs de Glue a la vez desactivó la cuenta
+
+- **Date:** 2026-11-15 · **Source topic:** `punto4-trusted`
+- **Finding:** la cuenta de Jean quedó desactivada ("AWS account deactivated at 2026-11-15T17:37:48-08:00", 01:37:48 UTC) unos dos minutos después de lanzar en paralelo tres jobs de Glue 5.0 `G.1X`: `taxi_zones` con 2 workers y yellow 2024-01 y 2025-01 con 4 cada uno, 10 workers en total. Las credenciales pasaron a tener un deny explícito de `voc-cancel-cred`. Hasta ahí solo habían corrido jobs de a uno, con 2 workers, sin problema. El presupuesto no era la causa: iban 8,6 USD de 50. Vocareum, la plataforma del Learner Lab, revisa "Glue Max Workers", "Glue Max Concurrent jobs" y "Glue Worker Types", y si se pasa alguno "the account will be flagged as fraudulent and deactivated" (https://help.vocareum.com/en/articles/8284823-aws-service-limits). No publica valores por defecto. *Sin verificar* cuál de los tres límites se pasó y qué valores tiene este curso. El "G.1X × 10 aceptado" del finding de límites de Academy era la creación del job, no una corrida. Mientras no se conozcan los límites: un job a la vez y pocos workers.
+- **Provenance:** fase 1 del plan del Punto 4 (sesión 2026-11-15) y captura del Learner Lab.

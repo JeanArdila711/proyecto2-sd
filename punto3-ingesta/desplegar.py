@@ -70,6 +70,10 @@ def variables(aws, bucket):
         "PREFIJO_CODIGO": PREFIJO_CODIGO,
         "EC2_NOMBRE": R["ec2_nombre"],
         "PROYECTO": config.PROYECTO,
+        # Punto 4: la ingesta inicia la preparación al terminar (la crea punto4-preparacion/desplegar.py)
+        "SM_PREPARACION_ARN": "arn:aws:states:{}:{}:stateMachine:{}".format(
+            aws.region_name, aws.client("sts").get_caller_identity()["Account"], R["sm_preparacion"]
+        ),
     }
 
 

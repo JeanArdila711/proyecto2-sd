@@ -183,13 +183,13 @@ Pendientes (arn:aws:states:::lambda:invoke, OutputPath $.Payload)
 ## Fase 0: Credenciales y permisos de `LabRole`
 Saber qué permite `LabRole` antes de escribir código. Si `StartExecution` está denegado, la fase 3 pasa al plan B.
 
-- [ ] 0.1 Pedirle a Jean credenciales nuevas de Academy en `~/.aws/credentials` bajo `[academy]`, con `AWS_PROFILE=academy` en `config.env`. Confirmar con `aws sts get-caller-identity --profile academy --region us-east-1 --query Arn --output text | sed 's/[0-9]\{12\}/<cuenta>/'`, sin imprimir el ID. [independiente]
-- [ ] 0.2 Prueba con recursos `tlc-prueba-*`, todos con CLI (`--profile academy --region us-east-1`) y archivos en el scratchpad de la sesión, no en el repo [depende de 0.1]:
+- [x] 0.1 Pedirle a Jean credenciales nuevas de Academy en `~/.aws/credentials` bajo `[academy]`, con `AWS_PROFILE=academy` en `config.env`. Confirmar con `aws sts get-caller-identity --profile academy --region us-east-1 --query Arn --output text | sed 's/[0-9]\{12\}/<cuenta>/'`, sin imprimir el ID. [independiente]
+- [x] 0.2 Prueba con recursos `tlc-prueba-*`, todos con CLI (`--profile academy --region us-east-1`) y archivos en el scratchpad de la sesión, no en el repo [depende de 0.1]:
   1. Subir un script `print("ok")` a `s3://<bucket>/codigo/prueba/prueba.py`. `aws glue create-job` con `--glue-version 5.0 --worker-type G.1X --number-of-workers 2 --role LabRole --command Name=glueetl,...`, después `start-job-run` y `get-job-run` hasta `SUCCEEDED`.
   2. `aws stepfunctions create-state-machine` con `LabRole` y un solo estado `glue:startJobRun.sync` sobre ese job; `start-execution` y `describe-execution` hasta `SUCCEEDED`.
   3. `aws lambda create-function` (python3.12, `LabRole`) con un handler que hace `list_executions(statusFilter="RUNNING")` y `start_execution` sobre esa state machine; `aws lambda invoke` y revisar la respuesta.
   4. Borrar los tres recursos y `codigo/prueba/`.
-- [ ] 0.3 Registrar el resultado de cada acción, permitida o denegada con el código de error, en `docs/design/findings.md`. [depende de 0.2]
+- [x] 0.3 Registrar el resultado de cada acción, permitida o denegada con el código de error, en `docs/design/findings.md`. [depende de 0.2]
 
 Verificación automática:
 - [ ] `aws glue get-jobs --profile academy --region us-east-1 --query 'Jobs[?starts_with(Name, \`tlc-prueba\`)]'`: vacío, sin restos de la prueba.
@@ -201,20 +201,20 @@ Verificación manual:
 ## Fase 1: Contrato y Glue job de la capa de detalle
 `trusted/{yellow,green,hvfhv}` y `trusted/taxi_zones` se generan corriendo el job a mano.
 
-- [ ] 1.1 Claves nuevas en `RECURSOS` — `comun/config.py` [independiente]
-- [ ] 1.2 Contrato: `DETALLE` de los cuatro datasets, `DESCARTADAS`, `TARIFA`, `familia()` y `validar()` — `punto4-preparacion/contrato.py` [independiente]
-- [ ] 1.3 Test del contrato — `punto4-preparacion/test_contrato.py` [depende de 1.2]. Asserts:
+- [x] 1.1 Claves nuevas en `RECURSOS` — `comun/config.py` [independiente]
+- [x] 1.2 Contrato: `DETALLE` de los cuatro datasets, `DESCARTADAS`, `TARIFA`, `familia()` y `validar()` — `punto4-preparacion/contrato.py` [independiente]
+- [x] 1.3 Test del contrato — `punto4-preparacion/test_contrato.py` [depende de 1.2]. Asserts:
   - el esquema real de raw de cada dataset, escrito como constante en el test a partir de research § Zona raw y `esquema.sql:14-44`, pasa `validar()` sin errores, con y sin `cbd_congestion_fee`;
   - los nombres destino son únicos y están en minúscula;
   - cada columna de `TARIFA` existe en el destino de su dataset;
   - `validar()` reporta una columna obligatoria que falta, una desconocida y un tipo de otra familia.
-- [ ] 1.4 Glue job con los pasos 1–4, 6 y 7 de § Glue job — `punto4-preparacion/preparar.py` [depende de 1.2]
-- [ ] 1.5 Despliegue del job: publica `preparar.py` y `contrato.py` en `codigo/punto4-preparacion/` y hace upsert de `tlc-preparacion` (Glue 5.0, `G.1X`, 2 workers por defecto, `MaxRetries=0`, timeout 60, `MaxConcurrentRuns` de `RECURSOS`, `--extra-py-files`, `--bucket`, etiqueta `Project`) — `punto4-preparacion/desplegar.py` [depende de 1.1, 1.4]
+- [x] 1.4 Glue job con los pasos 1–4, 6 y 7 de § Glue job — `punto4-preparacion/preparar.py` [depende de 1.2]
+- [x] 1.5 Despliegue del job: publica `preparar.py` y `contrato.py` en `codigo/punto4-preparacion/` y hace upsert de `tlc-preparacion` (Glue 5.0, `G.1X`, 2 workers por defecto, `MaxRetries=0`, timeout 60, `MaxConcurrentRuns` de `RECURSOS`, `--extra-py-files`, `--bucket`, etiqueta `Project`) — `punto4-preparacion/desplegar.py` [depende de 1.1, 1.4]
 
 Verificación automática:
-- [ ] `.venv/bin/python punto4-preparacion/test_contrato.py` → `ok`
-- [ ] `.venv/bin/python punto3-ingesta/test_raw.py` → `ok` (sin regresión)
-- [ ] `.venv/bin/python punto4-preparacion/desplegar.py` dos veces seguidas: la segunda actualiza y no crea nada nuevo.
+- [x] `.venv/bin/python punto4-preparacion/test_contrato.py` → `ok`
+- [x] `.venv/bin/python punto3-ingesta/test_raw.py` → `ok` (sin regresión)
+- [x] `.venv/bin/python punto4-preparacion/desplegar.py` dos veces seguidas: la segunda actualiza y no crea nada nuevo.
 
 Verificación manual:
 - [ ] `aws glue start-job-run --job-name tlc-preparacion --arguments '{"--dataset":"green","--mes":"2024-01"}'` → `SUCCEEDED`. En el control, `filas_raw == filas_detalle` (46–61 k), el esquema tiene las columnas canónicas sin `trip_id`, `mes_archivo` ni `cargado_en`, y aparecen los conteos de banderas.
@@ -225,20 +225,20 @@ Verificación manual:
 ## Fase 2: Qué falta y state machine
 `tlc-preparacion` procesa sola todo lo pendiente.
 
-- [ ] 2.1 `pendientes(raw, controles, workers)` según § Un control propio. Ignora en raw lo que no sea `.parquet` — `punto4-preparacion/pendientes.py` [independiente]
-- [ ] 2.2 Test de pendientes — `punto4-preparacion/test_pendientes.py` [depende de 2.1]. Asserts:
+- [x] 2.1 `pendientes(raw, controles, workers)` según § Un control propio. Ignora en raw lo que no sea `.parquet` — `punto4-preparacion/pendientes.py` [independiente]
+- [x] 2.2 Test de pendientes — `punto4-preparacion/test_pendientes.py` [depende de 2.1]. Asserts:
   - sin control → pendiente;
   - control más viejo que raw → pendiente;
   - control más nuevo → no pendiente;
   - `taxi_zones` → `mes "na"`;
   - orden determinista (dataset, mes);
   - workers según el dict.
-- [ ] 2.3 Handler que lista `raw/` y `trusted/_control/` con paginador y devuelve `{"pendientes": [...]}` — `punto4-preparacion/lambda_pendientes.py` [depende de 2.1]
+- [x] 2.3 Handler que lista `raw/` y `trusted/_control/` con paginador y devuelve `{"pendientes": [...]}` — `punto4-preparacion/lambda_pendientes.py` [depende de 2.1]
 - [ ] 2.4 En `desplegar.py`: upsert de la Lambda `tlc-preparacion-pendientes` (zip con `lambda_pendientes.py` y `pendientes.py`, env `BUCKET` y `WORKERS` en JSON) y de la state machine `tlc-preparacion` (§ State machine; `list_state_machines` por nombre → `update_state_machine` o `create_state_machine` con tags). `--borrar` borra la state machine, la Lambda y el job — `punto4-preparacion/desplegar.py` [depende de 2.3]
-- [ ] 2.5 CLI local: `--estado` (pendientes con la misma función más un resumen de los controles), `--ejecutar`, `--forzar --dataset --mes` y `--forzar --todo`. Termina con `sys.exit(0/1)` según el resultado de la ejecución, que espera con `describe_execution` — `punto4-preparacion/preparar_local.py` [depende de 2.1]
+- [x] 2.5 CLI local: `--estado` (pendientes con la misma función más un resumen de los controles), `--ejecutar`, `--forzar --dataset --mes` y `--forzar --todo`. Termina con `sys.exit(0/1)` según el resultado de la ejecución, que espera con `describe_execution` — `punto4-preparacion/preparar_local.py` [depende de 2.1]
 
 Verificación automática:
-- [ ] `.venv/bin/python punto4-preparacion/test_pendientes.py` → `ok`
+- [x] `.venv/bin/python punto4-preparacion/test_pendientes.py` → `ok`
 - [ ] `.venv/bin/python punto4-preparacion/desplegar.py` dos veces seguidas sin errores.
 
 Verificación manual:
@@ -248,8 +248,8 @@ Verificación manual:
 ## Fase 3: Encadenar con la ingesta
 EventBridge → ingesta → preparación, sin intervención. Si la fase 0 dio `StartExecution` denegado, esta fase se reduce a la tarea 3.3, documentando el plan B.
 
-- [ ] 3.1 `disparar_preparacion(resumen)` según § La Lambda de ingesta dispara siempre, llamada al final del handler antes del `raise` — `punto3-ingesta/lambda_ingesta.py` [independiente]
-- [ ] 3.2 `SM_PREPARACION_ARN` en `variables()`, armado con región, cuenta y `RECURSOS["sm_preparacion"]` — `punto3-ingesta/desplegar.py` [independiente]
+- [x] 3.1 `disparar_preparacion(resumen)` según § La Lambda de ingesta dispara siempre, llamada al final del handler antes del `raise` — `punto3-ingesta/lambda_ingesta.py` [independiente]
+- [x] 3.2 `SM_PREPARACION_ARN` en `variables()`, armado con región, cuenta y `RECURSOS["sm_preparacion"]` — `punto3-ingesta/desplegar.py` [independiente]
 - [ ] 3.3 Sección "Encadenamiento" del README del punto: cómo se dispara y el plan B — `punto4-preparacion/README.md` [depende de 3.1]
 
 Verificación automática:
@@ -317,3 +317,50 @@ Verificación manual:
   - Para empezar de cero, `aws s3 rm s3://<bucket>/trusted/ --recursive`. Raw no se toca en ningún paso.
 
 ## Notas de implementación
+
+**2026-11-15, sesión 1:**
+- Sin credenciales de Academy al arrancar (no existe el perfil `academy`). Se escribió el código de las fases 1, 2 y 3 antes de la fase 0, porque solo depende del resultado de la fase 0 si se niega `glue:CreateJob`, y `findings.md:35-39` ya registra un job `G.1X` aceptado. Si la fase 0 deniega `StartExecution`, `disparar_preparacion` deja el error en `resumen["preparacion"]` y se aplica el plan B.
+- Desvío del plan, a favor: el job **borra el control del mes antes de escribir** (paso 3 de `preparar.py`). Sin eso, si un reproceso forzado se cae a mitad de escritura, el control viejo seguiría más nuevo que raw y el mes parecería hecho con la partición rota.
+- La capa de layout de trusted (`prefijo_trusted`, `clave_control`) vive en `pendientes.py`, que también viaja al job por `--extra-py-files`, para que el job, la Lambda y `preparar_local.py` usen las mismas rutas.
+- `desplegar.py` ya tiene el job, la Lambda de pendientes y la state machine (1.5 y 2.4 juntos); falta correrlo en AWS. `preparar_local.py --estado` ya incluye la tabla de controles de 4.3.
+- Pendiente para seguir: credenciales → fase 0 → `desplegar.py` → verificaciones manuales de la fase 1.
+- Revisión del `revisor` (sin AWS) aplicada:
+  - El `Job` del `Map` descarta su salida (`ResultPath: null`) en vez de un `ResultSelector`, porque `ExecutionTime` es opcional en `JobRun` y un path ausente tumba la iteración.
+  - Desvío del plan: un mes que falla ya no frena a los demás. `Catch` → `Anotar falla`, y después del `Map` un `Pass` filtra `$[?(@.error)]` y un `Choice` termina en `Fail` si hubo alguno. La ejecución igual queda FAILED, pero procesa todo lo demás. *Sin verificar en AWS* que el filtro JSONPath funcione en `Parameters`; se prueba en la fase 2.
+  - `preparar.py` vuelve a leer el archivo de raw antes de escribir el control y falla si cambió durante el job (carrera con la EC2).
+  - `preparar_local.py --forzar` aborta si hay una ejecución en curso, y valida `--mes`.
+  - `disparar_preparacion` captura también `BotoCoreError` y usa timeouts cortos.
+- La fase 0 está en el scratchpad de la sesión (`fase0/probar.sh`). El hook de guardia bloquea los borrados de AWS que hace el script, así que lo corre Jean con `!`.
+
+**2026-11-15, sesión 1 (AWS):**
+- Fase 0 hecha (`findings.md`, "LabRole alcanza para Glue 5.0 y Step Functions"). Todo está permitido, también `StartExecution` desde la Lambda, así que la fase 3 va por la Lambda y no hace falta el plan B. Se agregó un `Retry` para `Glue.ConcurrentRunsExceededException` al `Job` del `Map`. Los recursos `tlc-prueba-permisos` siguen en la cuenta: hay que borrarlos con `scratchpad/fase0/limpiar.sh`, que corre Jean con `!` porque el guard bloquea los borrados de AWS. Mientras no se borren, las dos verificaciones automáticas de la fase 0 quedan sin marcar.
+- `desplegar.py` creó y después actualizó el job, la Lambda y la state machine.
+- Fase 1, resultados en Glue:
+  - green 2024-01: SUCCEEDED en 75 s y 150 DPU-s. Raw = detalle = 56.551 filas, sin columnas de auditoría. Banderas: `fuera_de_mes` 2, `duracion_invalida` 76, `distancia_invalida` 2.870, `monto_negativo` 186 y `zona_desconocida` 643.
+  - `taxi_zones`: SUCCEEDED en 55 s, 265 filas.
+  - yellow 2024-01 y 2025-01, con 4 workers: SUCCEEDED en 99 s y 102 s (396 y 411 DPU-s). Sus controles no se pudieron leer porque Academy revocó las credenciales (`voc-cancel-cred`).
+- Arreglo: `duracion_min` salía `decimal(27,6)`, porque `60.0` es un literal decimal en Spark SQL. Ahora divide por `60D`. Green 2024-01 hay que repetirlo para que quede en double; los yellow ya corrieron con el arreglo.
+- Para retomar:
+  1. Credenciales nuevas en `scratchpad/aws/credentials` (perfil `academy`), con `AWS_SHARED_CREDENTIALS_FILE`.
+  2. Leer los controles de yellow 2024-01 y 2025-01.
+  3. Repetir green 2024-01 (prueba de idempotencia).
+  4. Seguir con las verificaciones manuales de la fase 1 y después la fase 2.
+
+**2026-11-15, sesión 1 (cuenta nueva, segundo curso de Jean):**
+- La cuenta del primer curso quedó desactivada al correr tres jobs a la vez (`findings.md`). Jean pasó a la cuenta de su segundo curso: se replicaron los Puntos 2 y 3 (`crear_infra`, `sembrar`, `simular` 2024-01..2025-12, `desplegar` e `ingestar`) y raw quedó con los 72 archivos y `taxi_zones` en una corrida. La regla de ingesta quedó **pausada**. Se cambió la convención "Cuenta de la demo".
+- Desvío del plan por seguridad: `glue_workers` en 2 para todos los datasets y `preparacion_concurrencia` en 1, hasta conocer los límites de Glue de Vocareum. La tarea 4.1 ya no mide con 10 workers. Si Jean consigue los límites, se mide con más; si no, se queda en 2.
+- Los jobs se corren **de a uno**, con `scratchpad/correr_job.sh`. El script verifica que la cuenta esté activa, que no haya corridas activas y reintenta solo el `ConcurrentRunsExceeded`.
+- Fase 1 en la cuenta nueva, todo con 2 workers:
+
+  | Mes | Estado | Tiempo | DPU-s | Filas raw = detalle |
+  |---|---|---|---|---|
+  | green 2024-01 | SUCCEEDED | 94 s | 188 | 56.551 |
+  | `taxi_zones` | SUCCEEDED | 74 s | — | 265 |
+  | yellow 2024-01 | SUCCEEDED | 91 s | 182 | 2.964.624 |
+  | yellow 2025-01 | SUCCEEDED | 98 s | 196 | 3.475.226 |
+
+  - Las banderas de green son idénticas a las de la cuenta anterior.
+  - `duracion_min` sale `double`.
+  - Al repetir green 2024-01, la partición quedó con 1 archivo nuevo del mismo tamaño, sin duplicados.
+  - Sin verificar: que `cbd_congestion_fee` sea NULL en 2024 y tenga valores en 2025. El control no cuenta nulos; se ve con Athena en el Punto 5.
+

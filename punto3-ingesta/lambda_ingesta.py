@@ -20,7 +20,8 @@ import urllib.request
 import boto3
 from boto3.exceptions import S3UploadFailedError
 from boto3.s3.transfer import TransferConfig
-from botocore.exceptions import ClientError
+from botocore.config import Config
+from botocore.exceptions import BotoCoreError, ClientError
 
 import raw
 
@@ -153,6 +154,30 @@ def esperar_ec2(instancia, cid, context, resumen):
     resumen["ec2"] = f"sigue corriendo (SSM {cid}); el resultado queda en el historial de Run Command"
 
 
+# ------------------------------------------------------------------ Punto 4: encadenar la preparación
+def disparar_preparacion(resumen):
+    """Inicia la state machine tlc-preparacion, que calcula sola qué falta, salvo que ya haya una en curso.
+
+    Una falla aquí no tumba la ingesta: queda en resumen["preparacion"], no en resumen["errores"].
+    """
+    arn = os.environ.get("SM_PREPARACION_ARN")
+    if not arn:
+        resumen["preparacion"] = "sin SM_PREPARACION_ARN: no se encadena"
+        return
+    # Timeouts cortos: esperar_ec2 puede dejar solo ~20 s de margen antes del timeout de la Lambda
+    sfn = boto3.client("stepfunctions", config=Config(connect_timeout=5, read_timeout=10, retries={"max_attempts": 2}))
+    try:
+        # ponytail: chequeo y arranque no son atómicos. Alcanza mientras la Lambda corra de a una (concurrencia 1,
+        # ver desplegar.py) y nadie corra preparar_local.py --ejecutar en el mismo instante; si dos ejecuciones
+        # coinciden, dos jobs pueden reescribir la misma partición, y el control del último manda.
+        if sfn.list_executions(stateMachineArn=arn, statusFilter="RUNNING", maxResults=1)["executions"]:
+            resumen["preparacion"] = "ya hay una ejecución en curso"
+            return
+        resumen["preparacion"] = "iniciada: " + sfn.start_execution(stateMachineArn=arn)["executionArn"]
+    except (ClientError, BotoCoreError) as e:
+        resumen["preparacion"] = f"no se pudo iniciar: {e}"
+
+
 def handler(event, context):
     desde = event["desde"]
     bucket = env("BUCKET")
@@ -166,6 +191,7 @@ def handler(event, context):
     ingerir_hvfhv(bucket, desde, context, resumen)
     if cid is not False:
         esperar_ec2(instancia, cid, context, resumen)
+    disparar_preparacion(resumen)
     print(json.dumps(resumen, ensure_ascii=False))
     if resumen["errores"]:
         raise RuntimeError(json.dumps(resumen, ensure_ascii=False))
