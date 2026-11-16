@@ -16,6 +16,8 @@ _Every ruling passes the scope test when it is written (skill de memoria § Deci
 
 ## Journal (newest first)
 
+**2026-11-16 (Jean):** P2 y P3 cerradas (convenciones "Métrica de P2" y "Métrica de P3"), con la definición de `driver_pay` verificada en el diccionario de HVFHV. Se le quitaron a David, que sigue con el Punto 5.
+
 **2026-11-13 (Jean):** Arquitectura de la ingesta del Punto 3 decidida (convención "Ingesta automática"), sin Airflow ni Glue JDBC. Layout de raw decidido (convención "Layout de la zona raw"). Infraestructura del Punto 2 reproducida en la cuenta de Academy de Jean con los scripts del repo: mismo estado que la de David (2024-01 a 2024-03). Pendiente: implementar la ingesta (topic del Punto 3), P2/P3, decidir en qué cuenta corre la demo final.
 
 **2026-11-11 (David):** Se diligenció el Docx del enunciado: integrantes, link del repo, Punto 1 (caso de estudio, datos, P1–P6, consideraciones de calidad) y Punto 2. Conexión a AWS Academy por CLI y verificación de límites por servicio (findings). Decidido el reparto de fuentes: RDS = `taxi_zones` + green, EC2 = yellow, URL = HVFHV, más un simulador de llegada mensual (`current/fuentes-de-datos.md`). Pendiente: extracción RDS → S3 (Glue JDBC o script en EC2), P2/P3, arquitectura y topics.

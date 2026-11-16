@@ -10,6 +10,9 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 - Dos findings: marcadores `_$folder$` de Glue en trusted, y la EC2 encendida al iniciar el lab.
 - Como el profesor no responde, Glue queda en 2 workers y un job a la vez.
 
+### planificacion — P2 y P3 cerradas (Jean)
+- P2: tarifa base más recargos por milla. P3: (`driver_pay` + propina) sobre todo lo que paga el pasajero. Ver Conventions.
+
 ### punto5-catalogo — topic abierto (Jean para David)
 - Encargo para David: muestra de 3 meses de trusted en su cuenta y catalogación. Sus scripts se corren al final en la cuenta de la demo.
 

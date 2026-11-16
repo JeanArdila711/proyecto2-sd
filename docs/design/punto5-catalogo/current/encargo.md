@@ -69,4 +69,4 @@ Decisiones que son de David, para registrar como ruling en `punto5-catalogo/cont
 
 ## Después (no es parte de este encargo)
 
-Los Puntos 6 (SQL en Athena, Hive y SparkSQL), 7 (PySpark) y 8 (visualización y Streamlit detrás de API Gateway) siguen el mismo patrón: se desarrollan sobre la muestra y se corren al final en la cuenta de Jean. Cada uno abre su topic con `memoria-equipo`. Antes del 6 tienen que cerrarse las definiciones de P2 y P3, que también son de David (README § Open decisions).
+Los Puntos 6 (SQL en Athena, Hive y SparkSQL), 7 (PySpark) y 8 (visualización y Streamlit detrás de API Gateway) siguen el mismo patrón: se desarrollan sobre la muestra y se corren al final en la cuenta de Jean. Cada uno abre su topic con `memoria-equipo`. Las métricas de P2 y P3 ya están cerradas (CONTEXT § Conventions).

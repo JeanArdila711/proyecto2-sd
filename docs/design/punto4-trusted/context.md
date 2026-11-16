@@ -5,7 +5,7 @@
 
 ## Orientation
 
-Punto 4 de la rúbrica: preparación de datos de `raw/` a `trusted/` con AWS Glue y Apache Spark, automática y encadenable con la ingesta (convención "Ingesta automática"). Parte de los 24 meses en raw de la cuenta de Jean (convención "Cuenta de la demo"). Se diseña con RePPIT: las etapas viven en `working/`. La normalización de tarifas depende de P2 y P3 (README § Open decisions), que siguen abiertas. El topic se cierra cuando trusted se genera solo en AWS, el README del punto tiene evidencias y el Punto 4 del Docx está lleno.
+Punto 4 de la rúbrica: preparación de datos de `raw/` a `trusted/` con AWS Glue y Apache Spark, automática y encadenable con la ingesta (convención "Ingesta automática"). Parte de los 24 meses en raw de la cuenta de Jean (convención "Cuenta de la demo"). Se diseña con RePPIT: las etapas viven en `working/`. Trusted deja la tarifa en componentes. P2 y P3 la combinan según sus convenciones. El topic se cierra cuando trusted se genera solo en AWS, el README del punto tiene evidencias y el Punto 4 del Docx está lleno.
 
 ## Rulings
 

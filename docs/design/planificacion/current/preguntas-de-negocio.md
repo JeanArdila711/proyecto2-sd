@@ -17,15 +17,14 @@ Fuentes revisadas: la [guía de usuario](https://www.nyc.gov/assets/tlc/download
 
 ### Campos que usa cada una
 - **P1:** conteo de filas por dataset; `hvfhs_license_num` (HV0003 = Uber, HV0005 = Lyft); `PULocationID` → `Borough`.
-- **P2:** `fare_amount / trip_distance` (yellow) frente a `base_passenger_fare / trip_miles` (HVFHV); hora de pickup; `PULocationID`.
-- **P3:** `driver_pay` frente a `base_passenger_fare` u otro denominador (abierto); hora; borough.
+- **P2:** `tarifa_base + recargos` sobre `millas` en `viajes` (convención "Métrica de P2"); hora de pickup; zona de origen.
+- **P3:** `driver_pay + tips` sobre todo lo que paga el pasajero (convención "Métrica de P3"); hora; borough.
 - **P4:** `pickup_datetime − request_datetime`. `on_scene_datetime` no sirve porque solo se llena en vehículos accesibles.
 - **P5:** `tip_amount`, `payment_type = 1`, hora, `trip_distance`, `PULocationID`, `RatecodeID` / `airport_fee` / zonas con `service_zone = Airports` o `EWR`.
 - **P6:** `DOLocationID` → zonas de cobro (derivadas de 2025, convención "Zonas de cobro por congestión"); conteos 2024 contra 2025 por servicio; `cbd_congestion_fee` solo en 2025.
 
 ## Puntos abiertos
-- **P2:** los componentes de la tarifa no son iguales entre datasets. Hay que definir qué se compara (`fare_amount` frente a `base_passenger_fare`, con o sin recargos).
-- **P3:** definir el denominador: tarifa base, o todo lo que paga el pasajero (base + peajes + impuestos + recargos + propina).
+- Ninguno. P2 y P3 se cerraron el 2026-11-16 (convenciones "Métrica de P2" y "Métrica de P3").
 
 ## Datos
 
