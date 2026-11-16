@@ -15,6 +15,8 @@ _Every ruling passes the scope test when it is written (skill `memoria-equipo` �
 
 ## Journal (newest first)
 
+**2026-11-15, plan (Jean):** Plan de RePPIT en `working/plan.md`: fase 0 de permisos de `LabRole`, detalle, state machine con control en `trusted/_control/`, encadenamiento, carga completa, `viajes` y README. Verificados en docs oficiales los vacíos del research (vistas de Athena, overwrite, workers y precio, zonas 264/265). Siguiente: `/reppit-implement punto4-trusted`.
+
 **2026-11-15, propuesta (Jean):** Dos propuestas y una combinación en `working/proposal.md`. Jean eligió la combinación con dos ajustes (ruling "Diseño de trusted"). Siguiente: plan.
 
 **2026-11-15 (Jean):** Topic abierto. Research de RePPIT escrito en `working/research.md` (esquemas reales de raw leídos de los footers, requisitos, calidad, patrones y Glue en Academy). Falta que Jean lo revise antes de la propuesta.
@@ -25,5 +27,6 @@ The map is the listing for this folder. One row per file; folders give the lifec
 
 | File | Role | Load | What it holds |
 |------|------|------|---------------|
+| `working/plan.md` | draft | on-demand | Plan de RePPIT del Punto 4: fases 0 a 6, decisiones, contrato, state machine y verificaciones |
 | `working/proposal.md` | draft | on-demand | Dos propuestas de RePPIT: tres tablas con banderas frente a tabla unificada con cuarentena |
 | `working/research.md` | draft | on-demand | Research de RePPIT: raw tal como está, requisitos, calidad, patrones del repo y Glue en Academy |
