@@ -34,7 +34,7 @@ Load by task, not all at once. Solo `memoria-equipo` viene en el repo (`.claude/
 
 **Current state (2026-11-15):** Memoria en GitHub (`main`). Decididos el alcance de datos, las 6 preguntas, el reparto de fuentes, la arquitectura de la ingesta, el layout de raw y la cuenta de la demo (Conventions). El Docx del enunciado (`SI3007-262-proyecto2.docx`, raíz del repo) tiene llenos integrantes, link del repo y los Puntos 1 a 3, revisado por Jean en Word. El Punto 2 funciona en **dos cuentas de Academy** (David y Jean): David con 2024-01 a 2024-03 liberados, Jean con los 24 meses. El Punto 3 está cerrado (topic `punto3-ingesta`, Done): EventBridge cada 5 min → Lambda `tlc-ingesta` → `raw/`, con los 24 meses de yellow, green y HVFHV más `taxi_zones` (12,4 GiB) en la cuenta de Jean. Entrega y sustentación presencial: **2026-11-19**.
 
-**Next up:** cerrar las definiciones de P2 y P3; Punto 4 (raw → trusted con Glue y Spark) y partir los Puntos 4–8 en topics.
+**Next up:** plan de RePPIT del Punto 4 (`/reppit-plan punto4-trusted`) e implementarlo; cerrar las definiciones de P2 y P3 (David); partir los Puntos 5–8 en topics.
 **Known issues:** en la cuenta de Jean, la EC2 y la RDS están detenidas y la regla de EventBridge deshabilitada (2026-11-15, después de ingerir 2025-12). Para retomar: `crear_infra.py` y `desplegar.py`. Sin pausarla, la regla sigue disparando con la infraestructura apagada (la parte de la EC2 se omite): `punto3-ingesta/desplegar.py --pausar` al terminar. Las credenciales de Academy expiran con cada sesión del laboratorio. La EC2 y la RDS cobran mientras estén encendidas: `punto2-fuentes/infra/apagar_infra.py` al terminar.
 
 ## Conventions
