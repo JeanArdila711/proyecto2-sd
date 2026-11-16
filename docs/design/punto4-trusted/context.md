@@ -9,7 +9,7 @@ Punto 4 de la rúbrica: preparación de datos de `raw/` a `trusted/` con AWS Glu
 
 ## Rulings
 
-- **Diseño de trusted (Jean, 2026-11-15 19:30):** un Glue job escribe dos salidas por (dataset, mes), con la misma partición que raw: `trusted/{yellow,green,hvfhv}` (detalle, con todas las filas y banderas de calidad) y `trusted/viajes/servicio=` (común, con zonas desnormalizadas y la tarifa separada en componentes). Una state machine lanza solo lo que cambió, y la dispara la Lambda de ingesta. Se construye primero el detalle y después `viajes`. Discussion: `working/proposal.md` § Dirección elegida.
+- **Diseño de trusted (Jean, 2026-11-15 19:30):** Verdict: per project CONTEXT Conventions ("Layout de la zona trusted"). Topic detail: un solo Glue job escribe las dos salidas por (dataset, mes). Una state machine lanza solo lo que cambió y la dispara la Lambda de ingesta (plan B: `preparar_local.py`). Se construye primero el detalle y después `viajes`. Discussion: `working/proposal.md` § Dirección elegida.
 
 _Every ruling passes the scope test when it is written (skill `memoria-equipo` § Decisiones). Put a date in the bold label: the checker reads it._
 
