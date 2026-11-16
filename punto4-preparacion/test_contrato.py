@@ -76,4 +76,27 @@ assert set(c.banderas("hvfhv", "2025-12")) - set(c.banderas("yellow", "2025-12")
 assert "'2025-12'" in c.banderas("green", "2025-12")["fuera_de_mes"]
 assert "espera_seg" in c.derivadas("hvfhv") and "espera_seg" not in c.derivadas("yellow")
 assert c.derivadas("taxi_zones") == {} and c.banderas("taxi_zones", "na") == {}
+
+# viajes: mismas columnas y en el mismo orden en los tres servicios
+import re  # noqa: E402
+
+columnas_viajes = list(c.viajes("yellow"))
+assert all(list(c.viajes(s)) == columnas_viajes for s in c.SERVICIOS)
+assert not {"servicio", "year", "month"} & set(columnas_viajes)  # salen de la ruta
+assert set(c.BANDERAS_COMUNES) <= set(columnas_viajes)
+NO_COLUMNAS = {"coalesce", "case", "when", "then", "else", "end", "d"}
+for s in c.SERVICIOS:
+    # Cada columna sale de algo que existe en el servicio: detalle, derivadas, banderas o el join de zonas
+    disponibles = ({d for d, _, _ in c.DETALLE[s].values()} | set(c.derivadas(s)) | set(c.banderas(s, "2024-01"))
+                   | {f"{lado}_{n}" for lado in ("pu", "do") for n in c.ZONA})
+    for nombre, expr in c.viajes(s).items():
+        sin_literales = re.sub(r"'[^']*'", "", expr)
+        usadas = set(re.findall(r"[a-z_][a-z0-9_]*", sin_literales.lower())) - NO_COLUMNAS
+        assert usadas <= disponibles, (s, nombre, usadas - disponibles)
+    # Ninguna columna de tarifa cae en dos componentes
+    todas = [col for cols in c.TARIFA[s].values() for col in cols]
+    assert len(todas) == len(set(todas)), s
+assert "HV0003" in c.viajes("hvfhv")["compania"] and c.viajes("green")["compania"] == "'green'"
+assert c.viajes("yellow")["total_pagado"] == "total_amount"
+assert c.viajes("hvfhv")["total_pagado"].count("coalesce(") == 8  # los cuatro componentes de HVFHV
 print("ok")

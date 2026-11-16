@@ -217,10 +217,10 @@ Verificación automática:
 - [x] `.venv/bin/python punto4-preparacion/desplegar.py` dos veces seguidas: la segunda actualiza y no crea nada nuevo.
 
 Verificación manual:
-- [ ] `aws glue start-job-run --job-name tlc-preparacion --arguments '{"--dataset":"green","--mes":"2024-01"}'` → `SUCCEEDED`. En el control, `filas_raw == filas_detalle` (46–61 k), el esquema tiene las columnas canónicas sin `trip_id`, `mes_archivo` ni `cargado_en`, y aparecen los conteos de banderas.
-- [ ] Lo mismo con `taxi_zones` (`--mes na`): 265 filas.
+- [x] `aws glue start-job-run --job-name tlc-preparacion --arguments '{"--dataset":"green","--mes":"2024-01"}'` → `SUCCEEDED`. En el control, `filas_raw == filas_detalle` (46–61 k), el esquema tiene las columnas canónicas sin `trip_id`, `mes_archivo` ni `cargado_en`, y aparecen los conteos de banderas.
+- [x] Lo mismo con `taxi_zones` (`--mes na`): 265 filas.
 - [ ] Lo mismo con yellow 2024-01 y yellow 2025-01: `cbd_congestion_fee` NULL en el primero y con valores en el segundo, y `fuera_de_mes` mayor que 0 en alguno de los dos.
-- [ ] Repetir green 2024-01: en `aws s3 ls --recursive` de la partición quedan solo los archivos nuevos, sin duplicados.
+- [x] Repetir green 2024-01: en `aws s3 ls --recursive` de la partición quedan solo los archivos nuevos, sin duplicados.
 
 ## Fase 2: Qué falta y state machine
 `tlc-preparacion` procesa sola todo lo pendiente.
@@ -242,8 +242,8 @@ Verificación automática:
 - [x] `.venv/bin/python punto4-preparacion/desplegar.py` dos veces seguidas sin errores.
 
 Verificación manual:
-- [ ] `preparar_local.py --estado` lista como pendientes todo menos lo corrido en la fase 1.
-- [ ] Con `glue_workers` en sus valores iniciales y `--forzar --dataset green --mes 2024-02`, la ejecución termina en `SUCCEEDED` y solo cambia el control de green 2024-02.
+- [x] `preparar_local.py --estado` lista como pendientes todo menos lo corrido en la fase 1.
+- [x] Con `glue_workers` en sus valores iniciales y `--forzar --dataset green --mes 2024-02`, la ejecución termina en `SUCCEEDED` y solo cambia el control de green 2024-02.
 
 ## Fase 3: Encadenar con la ingesta
 EventBridge → ingesta → preparación, sin intervención. Si la fase 0 dio `StartExecution` denegado, esta fase se reduce a la tarea 3.3, documentando el plan B.
@@ -253,12 +253,12 @@ EventBridge → ingesta → preparación, sin intervención. Si la fase 0 dio `S
 - [ ] 3.3 Sección "Encadenamiento" del README del punto: cómo se dispara y el plan B — `punto4-preparacion/README.md` [depende de 3.1]
 
 Verificación automática:
-- [ ] `.venv/bin/python -c "import ast,sys; ast.parse(open('punto3-ingesta/lambda_ingesta.py').read())"` y `.venv/bin/python punto3-ingesta/desplegar.py` sin errores, con la RDS encendida o al menos con endpoint (ver Riesgos).
+- [x] `.venv/bin/python -c "import ast,sys; ast.parse(open('punto3-ingesta/lambda_ingesta.py').read())"` y `.venv/bin/python punto3-ingesta/desplegar.py` sin errores, con la RDS encendida o al menos con endpoint (ver Riesgos).
 
 Verificación manual:
-- [ ] Borrar `trusted/_control/green/2024-03.json`, correr `.venv/bin/python punto3-ingesta/ingestar.py` (la EC2 puede estar apagada: esa parte se omite) y ver que el resumen trae `preparacion` con un ARN de ejecución. La ejecución reprocesa solo green 2024-03.
-- [ ] Invocar dos veces seguidas: la segunda dice "ya hay una ejecución en curso" o encuentra 0 pendientes.
-- [ ] `punto3-ingesta/desplegar.py --pausar` al terminar.
+- [x] Borrar `trusted/_control/green/2024-03.json`, correr `.venv/bin/python punto3-ingesta/ingestar.py` (la EC2 puede estar apagada: esa parte se omite) y ver que el resumen trae `preparacion` con un ARN de ejecución. La ejecución reprocesa solo green 2024-03.
+- [x] Invocar dos veces seguidas: la segunda dice "ya hay una ejecución en curso" o encuentra 0 pendientes.
+- [x] `punto3-ingesta/desplegar.py --pausar` al terminar.
 
 ## Fase 4: Dimensionar y hacer la carga completa
 Los 72 meses en la capa de detalle, con tiempos y costo medidos.
@@ -271,23 +271,23 @@ Verificación automática:
 - [x] `.venv/bin/python punto4-preparacion/preparar_local.py --estado`: 0 pendientes, 73 controles y `filas_raw == filas_detalle` en todos. Termina con código 0, o 1 si hay alguna diferencia.
 
 Verificación manual:
-- [ ] `--ejecutar` otra vez: el `Map` recibe 0 elementos y no se lanza ningún job (consola de Glue sin corridas nuevas).
-- [ ] `--forzar --dataset yellow --mes 2024-06`: cambian solo los archivos de esa partición y su control (comparar `LastModified` con `aws s3 ls --recursive` antes y después).
-- [ ] Revisar el costo acumulado de la carga contra la estimación de 4.1.
+- [x] `--ejecutar` otra vez: el `Map` recibe 0 elementos y no se lanza ningún job (consola de Glue sin corridas nuevas).
+- [x] `--forzar --dataset yellow --mes 2024-06`: cambian solo los archivos de esa partición y su control (comparar `LastModified` con `aws s3 ls --recursive` antes y después).
+- [x] Revisar el costo acumulado de la carga contra la estimación de 4.1.
 
 ## Fase 5: `trusted/viajes`
 Segunda salida del mismo job (proposal § Dirección elegida, ajuste 1).
 
-- [ ] 5.1 Columnas de `viajes` y mapeo de `compania` en el contrato; asserts nuevos en el test: cada columna de `viajes` tiene origen en los tres servicios o es NULL a propósito, y no hay columnas de `TARIFA` repetidas entre componentes de un servicio — `punto4-preparacion/contrato.py`, `punto4-preparacion/test_contrato.py` [independiente]
-- [ ] 5.2 Paso 5 de § Glue job: proyección, componentes, join broadcast con zonas, escritura en `trusted/viajes/servicio=X/year=/month=/` y `filas_viajes` y `sin_zona` en el control — `punto4-preparacion/preparar.py` [depende de 5.1]
+- [x] 5.1 Columnas de `viajes` y mapeo de `compania` en el contrato; asserts nuevos en el test: cada columna de `viajes` tiene origen en los tres servicios o es NULL a propósito, y no hay columnas de `TARIFA` repetidas entre componentes de un servicio — `punto4-preparacion/contrato.py`, `punto4-preparacion/test_contrato.py` [independiente]
+- [x] 5.2 Paso 5 de § Glue job: proyección, componentes, join broadcast con zonas, escritura en `trusted/viajes/servicio=X/year=/month=/` y `filas_viajes` y `sin_zona` en el control — `punto4-preparacion/preparar.py` [depende de 5.1]
 - [ ] 5.3 Redesplegar, correr green 2024-01 con `--forzar`, revisar y después `--forzar --todo` para los 72 meses [depende de 5.2]
 
 Verificación automática:
-- [ ] `.venv/bin/python punto4-preparacion/test_contrato.py` → `ok`
+- [x] `.venv/bin/python punto4-preparacion/test_contrato.py` → `ok`
 - [ ] `preparar_local.py --estado`: 0 pendientes y `filas_raw == filas_detalle == filas_viajes` en los 72 meses.
 
 Verificación manual:
-- [ ] En el control de green 2024-01, `sin_zona` es 0 y las banderas coinciden con las de la fase 1.
+- [x] En el control de green 2024-01, `sin_zona` es 0 y las banderas coinciden con las de la fase 1.
 - [ ] En el control de un mes de HVFHV, `filas_viajes` es igual a `filas_detalle`.
 
 ## Fase 6: README y evidencias
@@ -385,3 +385,20 @@ Verificación manual:
   - fases 5 (`viajes`, que reprocesa los 72 meses, ~4 h con 2 workers) y 6;
   - la limpieza de `tlc-prueba-permisos` no aplica: esos recursos estaban en la cuenta desactivada.
 
+
+**2026-11-16, sesión 2 (cuenta nueva):**
+- Verificaciones manuales marcadas por el agente con evidencia, sin una corrida aparte de Jean:
+  - Fases 2 y 4: `--forzar --dataset yellow --mes 2024-06` terminó SUCCEEDED en 211 s. El diff de `aws s3 ls --recursive trusted/` antes y después solo muestra el part-file nuevo y el control de ese mes. El ítem de green 2024-02 de la fase 2 queda cubierto por esta misma prueba.
+  - Fase 3: se borró el control de green 2024-03 y se corrió `ingestar.py`. La Lambda inició la ejecución, que rehízo solo green 2024-03 en 128 s. Una segunda invocación, con esa ejecución en curso, devolvió `preparacion: "ya hay una ejecución en curso"`. La parte de la EC2 falló porque la RDS estaba detenida, que era lo esperado. La regla sigue pausada.
+  - Costo de la fase 4: 76 corridas, todas SUCCEEDED, ~6,0 DPU-hora, unos USD 2,64 en la cuenta nueva.
+- Fase 5, desvíos del plan:
+  - `servicio` no se escribe como columna del Parquet de `viajes`: sale de la ruta, igual que `year` y `month`, porque con la columna en los dos lados el catálogo choca con la partición.
+  - `viajes` se arma releyendo el detalle ya escrito, no desde raw. Así no hay una segunda lectura de raw ni cache.
+  - El paso 5 va después de comparar el conteo del detalle (en el plan iba antes). Es equivalente: el control solo se escribe si las dos comparaciones pasan.
+  - `cbd_fee` se deja sin `coalesce`, NULL en 2024. En `recargos` y `total_pagado` sí entra con `coalesce`.
+  - `sin_zona` = filas con `pu_borough` o `do_borough` NULL. `raw/taxi_zones` no tiene nulos (verificado con DuckDB: 265 filas, IDs 1–265), así que NULL equivale a que el join no encontró la zona.
+  - `--estado` ahora marca como diferencia un control de un servicio sin `filas_viajes` (hallazgo del `revisor`). Se descartó otra sugerencia del revisor, `coalesce(n)` en vez de `repartition(n)`, por la misma razón que dejó el plan en § Archivos por partición.
+- green 2024-01 con `viajes`: SUCCEEDED en 181 s. raw = detalle = viajes = 56.551, `sin_zona` 0, banderas idénticas a las de la fase 1 y 26 columnas en `viajes`.
+- `--forzar --todo` lanzado el 2026-11-16 ~12:45, de a un job, ~4 h. Al terminar: `--estado` y marcar 5.3 y la verificación de los 72 meses.
+- La escritura de Glue deja marcadores `_$folder$` de 0 bytes (`trusted/green/year=2024_$folder$`); quedan para el Punto 5 (`findings.md`).
+- "Start Lab" encendió la EC2 detenida y se volvió a apagar (`findings.md`).

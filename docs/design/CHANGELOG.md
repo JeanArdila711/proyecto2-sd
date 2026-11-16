@@ -4,6 +4,15 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 
 ## 2026-11-16
 
+### punto4-trusted — verificaciones y `viajes` (Jean)
+- Verificadas en AWS las fases 2 a 4: un `--forzar` toca solo su mes, la ingesta dispara la preparación y no arranca una segunda ejecución si ya hay una en curso. Costo acumulado de Glue en la cuenta nueva: ~6 DPU-hora (~USD 2,64).
+- Fase 5: `trusted/viajes` en el contrato y el job, probada en green 2024-01 (raw = detalle = viajes). Recarga de los 72 meses lanzada.
+- Dos findings: marcadores `_$folder$` de Glue en trusted, y la EC2 encendida al iniciar el lab.
+- Como el profesor no responde, Glue queda en 2 workers y un job a la vez.
+
+### punto5-catalogo — topic abierto (Jean para David)
+- Encargo para David: muestra de 3 meses de trusted en su cuenta y catalogación. Sus scripts se corren al final en la cuenta de la demo.
+
 ### punto4-trusted — implementación, capa de detalle (Jean)
 - Plan de RePPIT aprobado y escrito; código del Punto 4 en `punto4-preparacion/`: contrato, Glue job, Lambda de pendientes, state machine `tlc-preparacion` y encadenamiento desde `tlc-ingesta`.
 - `LabRole` permite Glue 5.0 y Step Functions con `glue:startJobRun.sync`, también `StartExecution` desde la Lambda; no hace falta plan B (finding nuevo).

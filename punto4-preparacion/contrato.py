@@ -185,3 +185,37 @@ def banderas(dataset, mes):
         b["espera_negativa"] = "espera_seg < 0"
         b["pago_mayor_a_tarifa"] = "driver_pay > base_passenger_fare"
     return b
+
+
+# viajes: tabla común a los tres servicios (fase 5). servicio, year y month salen de la ruta, no del Parquet.
+SERVICIOS = ("yellow", "green", "hvfhv")
+COMPANIA_HVFHV = {"HV0003": "uber", "HV0005": "lyft"}  # cualquier otra licencia: "otra"
+# Columnas que agrega el join con taxi_zones en preparar.py, por extremo del viaje (pu_, do_)
+ZONA = {"borough": "Borough", "zona": "Zone", "service_zone": "service_zone"}
+BANDERAS_COMUNES = ("fuera_de_mes", "duracion_invalida", "distancia_invalida", "monto_negativo", "zona_desconocida")
+
+
+def _suma(columnas):
+    return " + ".join(f"coalesce({c}, 0D)" for c in columnas)
+
+
+def viajes(dataset):
+    """Columnas de viajes: nombre -> expresión Spark SQL sobre el detalle ya escrito más las columnas de zona."""
+    t = TARIFA[dataset]
+    if dataset == "hvfhv":
+        casos = " ".join(f"WHEN '{lic}' THEN '{c}'" for lic, c in COMPANIA_HVFHV.items())
+        compania = f"CASE hvfhs_license_num {casos} ELSE 'otra' END"
+        total = _suma(c for cols in t.values() for c in cols)
+    else:
+        compania, total = f"'{dataset}'", "total_amount"
+    v = {"compania": compania}
+    v.update({c: c for c in ("pickup_datetime", "dropoff_datetime", "pickup_date", "pickup_hour", "duracion_min")})
+    for lado in ("pu", "do"):
+        v[f"{lado}_zona_id"] = f"{lado}locationid"
+        v.update({f"{lado}_{nombre}": f"{lado}_{nombre}" for nombre in ZONA})
+    v["millas"] = DISTANCIA[dataset]
+    v.update({componente: _suma(cols) for componente, cols in t.items()})
+    v["cbd_fee"] = "cbd_congestion_fee"  # NULL en 2024: el cobro empezó en 2025
+    v["total_pagado"] = total
+    v.update({b: b for b in BANDERAS_COMUNES})
+    return v

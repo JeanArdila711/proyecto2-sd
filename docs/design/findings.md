@@ -91,3 +91,15 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-15 · **Source topic:** `punto4-trusted`
 - **Finding:** la cuenta de Jean quedó desactivada ("AWS account deactivated at 2026-11-15T17:37:48-08:00", 01:37:48 UTC) unos dos minutos después de lanzar en paralelo tres jobs de Glue 5.0 `G.1X`: `taxi_zones` con 2 workers y yellow 2024-01 y 2025-01 con 4 cada uno, 10 workers en total. Las credenciales pasaron a tener un deny explícito de `voc-cancel-cred`. Hasta ahí solo habían corrido jobs de a uno, con 2 workers, sin problema. El presupuesto no era la causa: iban 8,6 USD de 50. Vocareum, la plataforma del Learner Lab, revisa "Glue Max Workers", "Glue Max Concurrent jobs" y "Glue Worker Types", y si se pasa alguno "the account will be flagged as fraudulent and deactivated" (https://help.vocareum.com/en/articles/8284823-aws-service-limits). No publica valores por defecto. *Sin verificar* cuál de los tres límites se pasó y qué valores tiene este curso. El "G.1X × 10 aceptado" del finding de límites de Academy era la creación del job, no una corrida. Mientras no se conozcan los límites: un job a la vez y pocos workers.
 - **Provenance:** fase 1 del plan del Punto 4 (sesión 2026-11-15) y captura del Learner Lab.
+
+## [hecho] Glue deja marcadores `_$folder$` de 0 bytes en trusted
+
+- **Date:** 2026-11-16 · **Source topic:** `punto4-trusted`
+- **Finding:** al escribir con `mode("overwrite")` en `s3://.../trusted/{dataset}/year=YYYY/month=MM/`, Glue crea a veces un objeto vacío del directorio padre, por ejemplo `trusted/yellow/year=2024_$folder$`. No afecta los conteos, pero cae dentro de la ruta de la tabla. Al catalogar (crawler o Hive), hay que excluir `**_$folder$` o borrarlos antes.
+- **Provenance:** `aws s3 ls --recursive trusted/` antes y después de `--forzar` de yellow 2024-06, 2026-11-16. Aparecen dos, uno de green y uno de yellow.
+
+## [hecho] AWS Academy: "Start Lab" vuelve a encender la EC2 detenida
+
+- **Date:** 2026-11-16 · **Source topic:** `punto4-trusted`
+- **Finding:** la EC2 `tlc-fuente-archivos`, detenida el día anterior con `apagar_infra.py`, apareció `running`, con `LaunchTime` 2026-11-16 12:27 (hora local), cerca de cuando Jean inició el lab. La RDS siguió detenida. Que la encienda "Start Lab" es una inferencia, no está verificada en la documentación de Academy. Después de cada "Start Lab" hay que revisar la EC2 y apagarla si no se va a usar, porque cobra.
+- **Provenance:** `aws ec2 describe-instances` y `aws rds describe-db-instances` en la cuenta del segundo curso de Jean, 2026-11-16.

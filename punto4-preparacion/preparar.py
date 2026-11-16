@@ -7,7 +7,9 @@ contrato.py y pendientes.py llegan por --extra-py-files.
   2. Valida el esquema contra el contrato. Si no cumple, falla sin tocar trusted.
   3. Borra el control del mes: si algo falla de aquí en adelante, el mes queda pendiente.
   4. Castea y renombra, agrega derivadas y banderas, y sobrescribe la partición de detalle.
-  5. Relee lo escrito, compara el conteo con raw y escribe el control. Si no coincide, falla sin control.
+  5. Relee lo escrito y compara el conteo con raw. Si no coincide, falla sin control.
+  6. Solo servicios: desde el detalle escrito, sobrescribe la partición de viajes y compara su conteo.
+  7. Escribe el control.
 
 Ninguna fila se borra: la calidad queda en las banderas.
 """
@@ -55,6 +57,21 @@ def detalle(df, dataset, mes):
     return df
 
 
+def viajes(spark, detalle_escrito, bucket, dataset):
+    """Proyección común de viajes, con las zonas de origen y destino por join broadcast (265 filas).
+
+    Las zonas salen de raw, no de trusted/taxi_zones, para no depender del orden en que se prepara cada dataset.
+    Un ID sin zona queda con las columnas de zona en NULL.
+    """
+    zonas = spark.read.parquet(f"s3://{bucket}/{layout.CLAVE_ZONAS_RAW}")
+    df = detalle_escrito
+    for lado in ("pu", "do"):
+        z = zonas.select(F.col("LocationID").cast("int").alias(f"_{lado}_id"),
+                         *[F.col(origen).alias(f"{lado}_{nombre}") for nombre, origen in contrato.ZONA.items()])
+        df = df.join(F.broadcast(z), F.col(f"{lado}locationid") == F.col(f"_{lado}_id"), "left")
+    return df.select(*[F.expr(expr).alias(nombre) for nombre, expr in contrato.viajes(dataset).items()])
+
+
 def main():
     args = getResolvedOptions(sys.argv, ["dataset", "mes", "bucket"])
     dataset, mes, bucket = args["dataset"], args["mes"], args["bucket"]
@@ -91,6 +108,18 @@ def main():
     if fila["filas"] != filas_raw:
         raise RuntimeError(f"{dataset} {mes}: raw tiene {filas_raw} filas y trusted {fila['filas']}")
 
+    extra = {}
+    if dataset in contrato.SERVICIOS:
+        destino_viajes = f"s3://{bucket}/{layout.prefijo_trusted('viajes', mes, servicio=dataset)}"
+        viajes(spark, escrito, bucket, dataset).repartition(n).write.mode("overwrite").parquet(destino_viajes)
+        v = spark.read.parquet(destino_viajes).agg(
+            F.count(F.lit(1)).alias("filas"),
+            F.sum(F.expr("pu_borough IS NULL OR do_borough IS NULL").cast("long")).alias("sin_zona"),
+        ).first()
+        if v["filas"] != filas_raw:
+            raise RuntimeError(f"{dataset} {mes}: raw tiene {filas_raw} filas y viajes {v['filas']}")
+        extra = {"filas_viajes": v["filas"], "sin_zona": int(v["sin_zona"] or 0)}
+
     # Si la ingesta reemplazó el archivo de raw mientras corría el job, no se escribe el control: el mes
     # queda pendiente y la ejecución siguiente lo rehace con la versión nueva.
     if archivo_raw(s3, bucket, dataset, mes)[1:] != (tamano, modificado):
@@ -103,6 +132,7 @@ def main():
         "filas_raw": filas_raw,
         "filas_detalle": fila["filas"],
         "archivos_detalle": n,
+        **extra,
         "banderas": {b: int(fila[b] or 0) for b in nombres_banderas},
         "esquema_detalle": [[f.name, f.dataType.simpleString()] for f in escrito.schema.fields],
         "job_run_id": run_id,

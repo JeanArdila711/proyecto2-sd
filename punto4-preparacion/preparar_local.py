@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from comun import config  # noqa: E402
 from comun.config import RECURSOS as R  # noqa: E402
 
+import contrato  # noqa: E402
 import pendientes  # noqa: E402
 
 
@@ -51,7 +52,9 @@ def estado(s3, bucket):
         d["viajes"] += c.get("filas_viajes", 0)
         for b, n in c["banderas"].items():
             d["banderas"][b] += n
-        if c["filas_raw"] != c["filas_detalle"] or c.get("filas_viajes", c["filas_raw"]) != c["filas_raw"]:
+        # Un servicio sin filas_viajes es un control de antes de la fase 5: cuenta como diferencia
+        viajes_ok = c["dataset"] not in contrato.SERVICIOS or c.get("filas_viajes") == c["filas_raw"]
+        if c["filas_raw"] != c["filas_detalle"] or not viajes_ok:
             diferencias.append(clave)
     print(f"\nControles: {len(controles)}")
     print(f"  {'dataset':<10} {'meses':>5} {'filas raw':>13} {'detalle':>13} {'viajes':>13}")

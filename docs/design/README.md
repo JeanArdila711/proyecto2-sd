@@ -18,7 +18,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | **2** — Fuentes de datos | RDS = zonas + green, EC2 = yellow, URL = HVFHV; infraestructura, siembra y simulador funcionando; Punto 2 del Docx con evidencias | In progress (`punto2-fuentes`) |
 | **3** — Ingesta automática a S3 | EventBridge → Lambda (HVFHV) + SSM a la EC2 (yellow, green, zonas) → `raw/`; corre sola, idempotente y probada en AWS. Punto 3 del Docx con evidencias | Done (`punto3-ingesta`) |
 | **4** — Preparación raw → trusted | Glue + Spark | In progress (`punto4-trusted`) |
-| **5** — Catalogación | Glue Data Catalog + EMR/Hive | Planned - no topic |
+| **5** — Catalogación | Glue Data Catalog + EMR/Hive | In progress (`punto5-catalogo`) |
 | **6** — Analítica SQL | Athena, Hive y SparkSQL respondiendo P1–P6 | Planned - no topic |
 | **7** — Analítica PySpark | PySpark respondiendo P1–P6 | Planned - no topic |
 | **8** — Visualización y app | Gráficas + Streamlit detrás de API Gateway | Planned - no topic |
@@ -31,6 +31,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | [`punto2-fuentes`](punto2-fuentes/context.md) | Fuentes de datos: infraestructura, siembra y simulador | In progress |
 | [`punto3-ingesta`](punto3-ingesta/context.md) | Ingesta automática a la zona raw | Done |
 | [`punto4-trusted`](punto4-trusted/context.md) | Preparación raw → trusted con Glue y Spark | In progress |
+| [`punto5-catalogo`](punto5-catalogo/context.md) | Catalogación en Glue Data Catalog y EMR/Hive (David) | In progress |
 
 ## Documents
 
@@ -43,6 +44,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | planificacion | Rúbrica | [rubrica.md](planificacion/current/rubrica.md) |
 | planificacion | Preguntas de negocio y datos | [preguntas-de-negocio.md](planificacion/current/preguntas-de-negocio.md) |
 | planificacion | Fuentes de datos (Punto 2) | [fuentes-de-datos.md](planificacion/current/fuentes-de-datos.md) |
+| punto5-catalogo | Encargo de David: muestra y Punto 5 | [encargo.md](punto5-catalogo/current/encargo.md) |
 | — | Documento de entrega (Docx del enunciado) | [SI3007-262-proyecto2.docx](../../SI3007-262-proyecto2.docx) |
 
 ## Open decisions
