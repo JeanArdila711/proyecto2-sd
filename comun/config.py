@@ -52,6 +52,11 @@ RECURSOS = {
     "glue_workers": {"taxi_zones": 2, "green": 2, "yellow": 2, "hvfhv": 2},
     # 1: varios jobs de Glue a la vez desactivaron la cuenta de Academy (findings.md, 2026-11-15)
     "preparacion_concurrencia": 1,  # MaxConcurrency del Map y MaxConcurrentRuns del job
+    # Punto 5: catalogación (Glue Data Catalog, Athena y EMR/Hive)
+    "glue_base": "tlc_trusted",
+    "lambda_catalogo": "tlc-catalogo",  # último paso de la state machine tlc-preparacion
+    "athena_workgroup": "tlc-consultas",
+    "athena_prefijo": "athena/",  # resultados de Athena, fuera de raw/ y trusted/
 }
 
 URL_TLC = "https://d37ci6vzurychx.cloudfront.net"

@@ -219,7 +219,7 @@ Verificación automática:
 Verificación manual:
 - [x] `aws glue start-job-run --job-name tlc-preparacion --arguments '{"--dataset":"green","--mes":"2024-01"}'` → `SUCCEEDED`. En el control, `filas_raw == filas_detalle` (46–61 k), el esquema tiene las columnas canónicas sin `trip_id`, `mes_archivo` ni `cargado_en`, y aparecen los conteos de banderas.
 - [x] Lo mismo con `taxi_zones` (`--mes na`): 265 filas.
-- [ ] Lo mismo con yellow 2024-01 y yellow 2025-01: `cbd_congestion_fee` NULL en el primero y con valores en el segundo, y `fuera_de_mes` mayor que 0 en alguno de los dos.
+- [x] Lo mismo con yellow 2024-01 y yellow 2025-01: `cbd_congestion_fee` NULL en el primero y con valores en el segundo, y `fuera_de_mes` mayor que 0 en alguno de los dos.
 - [x] Repetir green 2024-01: en `aws s3 ls --recursive` de la partición quedan solo los archivos nuevos, sin duplicados.
 
 ## Fase 2: Qué falta y state machine
@@ -405,3 +405,4 @@ Verificación manual:
 - Recarga completa terminada: ejecución SUCCEEDED en 16.848 s (~4 h 41 min), de 12:44 a 17:25. `--estado`: 0 pendientes, 73 controles, sin diferencias (exit 0). Totales: green 1.251.593, hvfhv 483.060.132, yellow 89.892.322 y taxi_zones 265, con raw = detalle = viajes en los 72 meses de servicio. Control de hvfhv 2025-06: 19.868.009 filas en raw, detalle y viajes, y `sin_zona` 0.
 - Tiempo de Glue de la recarga: ~219 min de ejecución, ~7,3 DPU-hora, unos USD 3,2 (G.1X con 2 workers, a USD 0,44 por DPU-hora).
 - "Start Lab" volvió a encender la EC2 a las 14:46, y se apagó otra vez. Es la segunda vez que pasa.
+- Verificación de `cbd_congestion_fee` hecha con Athena en el Punto 5 (2026-11-16): `cbd_fee` de `viajes` es NULL en todo 2024 de los tres servicios y tiene valores en todo 2025 de yellow y HVFHV (green: 587.551 de 591.375). `fuera_de_mes` de yellow suma 634 en los 24 meses.

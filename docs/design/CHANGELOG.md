@@ -4,6 +4,12 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 
 ## 2026-11-16
 
+### punto5-catalogo — catálogo, Athena y Hive (Jean)
+- El Punto 5 pasa a Jean; los Puntos 6–8 los hace un compañero. El encargo de David queda archivado.
+- `punto5-catalogo/`: `catalogo.py` (también Lambda `tlc-catalogo`), `desplegar.py`, `verificar.py` y `emr_hive.py` + `hive.q`. La state machine del Punto 4 suma el paso `Catalogar`.
+- En la cuenta de la demo: base `tlc_trusted` con 5 tablas y 144 particiones. Athena coincide con los controles en todas las particiones, y Hive en un EMR de un nodo leyó el mismo catálogo; el cluster se apagó solo en 778 s.
+- Verificado de paso: `cbd_fee` es NULL en 2024 y tiene valores en 2025. Un finding nuevo sobre EMR en Academy.
+
 ### punto4-trusted — verificaciones y `viajes` (Jean)
 - Verificadas en AWS las fases 2 a 4: un `--forzar` toca solo su mes, la ingesta dispara la preparación y no arranca una segunda ejecución si ya hay una en curso. Costo acumulado de Glue en la cuenta nueva: ~6 DPU-hora (~USD 2,64).
 - Fase 5: `trusted/viajes` en el contrato y el job, probada en green 2024-01 (raw = detalle = viajes). Recarga de los 72 meses lanzada.

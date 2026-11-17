@@ -4,7 +4,8 @@
   1. Publica preparar.py, contrato.py y pendientes.py en s3://<bucket>/codigo/punto4-preparacion/.
   2. Crea o actualiza el Glue job tlc-preparacion (Glue 5.0, G.1X, LabRole, sin reintentos propios).
   3. Crea o actualiza la Lambda tlc-preparacion-pendientes, que calcula qué falta preparar.
-  4. Crea o actualiza la state machine tlc-preparacion: pendientes -> Map -> glue:startJobRun.sync.
+  4. Crea o actualiza la state machine tlc-preparacion: pendientes -> Map -> glue:startJobRun.sync, y al
+     final la Lambda tlc-catalogo del Punto 5 si ya existe (la crea punto5-catalogo/desplegar.py).
 
 Uso (desde la raíz del repo):
   python punto4-preparacion/desplegar.py
@@ -102,7 +103,7 @@ def asegurar_lambda(lam, rol, bucket):
     return lam.get_function(FunctionName=nombre)["Configuration"]["FunctionArn"]
 
 
-def definicion(arn_lambda):
+def definicion(arn_lambda, arn_catalogo=None):
     job = {
         "Type": "Task",
         "Resource": "arn:aws:states:::glue:startJobRun.sync",
@@ -144,13 +145,31 @@ def definicion(arn_lambda):
                 },
                 "Next": "Fallidos",
             },
-            "Fallidos": {"Type": "Pass", "Parameters": {"fallidos.$": "$[?(@.error)]"}, "Next": "Hubo fallas"},
+            "Fallidos": {"Type": "Pass", "Parameters": {"fallidos.$": "$[?(@.error)]"},
+                         "Next": "Catalogar" if arn_catalogo else "Hubo fallas"},
+            # Punto 5: registra en el Glue Data Catalog las particiones de los meses que quedaron con control,
+            # también si alguno falló. Si la Lambda falla, el error queda en $.error_catalogo y Hubo fallas
+            # termina la ejecución en Fallo sin perder la lista de meses fallidos.
+            **({"Catalogar": {
+                "Type": "Task",
+                "Resource": "arn:aws:states:::lambda:invoke",
+                "Parameters": {"FunctionName": arn_catalogo, "Payload": {}},
+                "ResultSelector": {"tablas.$": "$.Payload.tablas"},
+                "ResultPath": "$.catalogo",
+                "Retry": [{"ErrorEquals": ["Lambda.ServiceException", "Lambda.TooManyRequestsException",
+                                           "Lambda.SdkClientException"], "IntervalSeconds": 5, "MaxAttempts": 3,
+                           "BackoffRate": 2}],
+                "Catch": [{"ErrorEquals": ["States.ALL"], "ResultPath": "$.error_catalogo",
+                           "Next": "Hubo fallas"}],
+                "Next": "Hubo fallas",
+            }} if arn_catalogo else {}),
             "Hubo fallas": {
                 "Type": "Choice",
-                "Choices": [{"Variable": "$.fallidos[0]", "IsPresent": True, "Next": "Fallo"}],
+                "Choices": [{"Or": [{"Variable": "$.fallidos[0]", "IsPresent": True},
+                                    {"Variable": "$.error_catalogo", "IsPresent": True}], "Next": "Fallo"}],
                 "Default": "Listo",
             },
-            "Fallo": {"Type": "Fail", "Error": "MesesFallidos", "Cause": "Algún mes falló; ver el Map"},
+            "Fallo": {"Type": "Fail", "Error": "MesesFallidos", "Cause": "Algún mes o el catálogo falló; ver el historial"},
             "Listo": {"Type": "Succeed"},
         },
     }
@@ -164,8 +183,15 @@ def buscar_state_machine(sfn):
     return None
 
 
-def asegurar_state_machine(sfn, rol, arn_lambda):
-    cuerpo = json.dumps(definicion(arn_lambda))
+def arn_catalogo(lam):
+    try:
+        return lam.get_function(FunctionName=R["lambda_catalogo"])["Configuration"]["FunctionArn"]
+    except lam.exceptions.ResourceNotFoundException:
+        return None
+
+
+def asegurar_state_machine(sfn, rol, arn_lambda, arn_cat=None):
+    cuerpo = json.dumps(definicion(arn_lambda, arn_cat))
     arn = buscar_state_machine(sfn)
     if arn:
         sfn.update_state_machine(stateMachineArn=arn, definition=cuerpo, roleArn=rol)
@@ -176,6 +202,7 @@ def asegurar_state_machine(sfn, rol, arn_lambda):
             tags=[{"key": "Project", "value": config.PROYECTO}],
         )
         log(f"state machine {R['sm_preparacion']}: creada")
+    log("paso Catalogar (Punto 5): " + ("incluido" if arn_cat else "no, falta la Lambda tlc-catalogo"))
 
 
 def borrar(glue, lam, sfn):
@@ -197,6 +224,8 @@ def borrar(glue, lam, sfn):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--borrar", action="store_true", help="borra la state machine, la Lambda y el job")
+    p.add_argument("--solo-state-machine", action="store_true",
+                   help="solo actualiza la state machine (lo usa punto5-catalogo/desplegar.py)")
     args = p.parse_args()
 
     aws = config.sesion(config.cargar())
@@ -209,10 +238,16 @@ def main():
     cuenta = aws.client("sts").get_caller_identity()["Account"]
     rol = f"arn:aws:iam::{cuenta}:role/LabRole"
     print("Preparación raw -> trusted (Punto 4)")
-    publicar_codigo(aws.client("s3"), bucket)
-    asegurar_job(glue, rol, bucket)
-    arn_lambda = asegurar_lambda(lam, rol, bucket)
-    asegurar_state_machine(sfn, rol, arn_lambda)
+    if args.solo_state_machine:
+        if not buscar_state_machine(sfn):
+            log("no hay state machine que actualizar")
+            return
+        arn_lambda = lam.get_function(FunctionName=R["lambda_pendientes"])["Configuration"]["FunctionArn"]
+    else:
+        publicar_codigo(aws.client("s3"), bucket)
+        asegurar_job(glue, rol, bucket)
+        arn_lambda = asegurar_lambda(lam, rol, bucket)
+    asegurar_state_machine(sfn, rol, arn_lambda, arn_catalogo(lam))
 
 
 if __name__ == "__main__":

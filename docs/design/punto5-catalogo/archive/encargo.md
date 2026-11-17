@@ -46,7 +46,7 @@ python punto4-preparacion/preparar_local.py --estado
 - La parte de la EC2 (yellow, green y zonas) termina después que la Lambda. Por eso los meses que lleguen tarde se procesan con el `--ejecutar` siguiente.
 - Listo cuando `--estado` muestra 0 pendientes y 10 controles: 3 meses × 3 servicios más `taxi_zones`. En cada uno, `filas_raw == filas_detalle == filas_viajes`. Son unos 10 jobs de ~2–3 min, de a uno.
 - 2024 no tiene `cbd_congestion_fee`. Las consultas del cobro por congestión van a salir vacías en la muestra, y eso es lo esperado: se validan en la cuenta de Jean. No liberes meses de 2025, porque HVFHV bajaría todos los meses intermedios.
-- Al terminar cada sesión: `python punto2-fuentes/infra/apagar_infra.py`. Ojo: "Start Lab" vuelve a encender la EC2 (observado dos veces) (`findings.md`), así que revisala al arrancar.
+- Al terminar cada sesión: `python punto2-fuentes/infra/apagar_infra.py`. Ojo: "Start Lab" vuelve a encender la EC2 (observado tres veces) (`findings.md`), así que revisala al arrancar.
 
 ## Fase B: Punto 5, catalogación
 
