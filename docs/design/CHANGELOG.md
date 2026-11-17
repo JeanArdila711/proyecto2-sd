@@ -4,6 +4,10 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 
 ## 2026-11-16
 
+### punto4-trusted — review y README (Jean)
+- `/reppit-review` sin bloqueantes. Camino de falla de la state machine probado con `test-state`, limpieza menor de `RECURSOS` y de un comentario.
+- `punto4-preparacion/README.md` escrito: por qué así y lo descartado, zona trusted, contrato y banderas, idempotencia, encadenamiento, reproducir y resultados. Faltan las capturas.
+
 ### punto5-catalogo — catálogo, Athena y Hive (Jean)
 - El Punto 5 pasa a Jean; los Puntos 6–8 los hace un compañero. El encargo de David queda archivado.
 - `punto5-catalogo/`: `catalogo.py` (también Lambda `tlc-catalogo`), `desplegar.py`, `verificar.py` y `emr_hive.py` + `hive.q`. La state machine del Punto 4 suma el paso `Catalogar`.

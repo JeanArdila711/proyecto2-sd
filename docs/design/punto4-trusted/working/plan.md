@@ -192,11 +192,11 @@ Saber qué permite `LabRole` antes de escribir código. Si `StartExecution` est�
 - [x] 0.3 Registrar el resultado de cada acción, permitida o denegada con el código de error, en `docs/design/findings.md`. [depende de 0.2]
 
 Verificación automática:
-- [ ] `aws glue get-jobs --profile academy --region us-east-1 --query 'Jobs[?starts_with(Name, \`tlc-prueba\`)]'`: vacío, sin restos de la prueba.
-- [ ] `aws stepfunctions list-state-machines --profile academy --region us-east-1 --query 'stateMachines[?starts_with(name, \`tlc-prueba\`)]'`: vacío.
+- [x] N/A (la prueba quedó en la cuenta desactivada) `aws glue get-jobs --profile academy --region us-east-1 --query 'Jobs[?starts_with(Name, \`tlc-prueba\`)]'`: vacío, sin restos de la prueba.
+- [x] N/A (la prueba quedó en la cuenta desactivada) `aws stepfunctions list-state-machines --profile academy --region us-east-1 --query 'stateMachines[?starts_with(name, \`tlc-prueba\`)]'`: vacío.
 
 Verificación manual:
-- [ ] Jean lee la entrada de `findings.md` y confirma el camino de la fase 3 (Lambda o plan B).
+- [x] N/A, superado por la fase 3 verificada en AWS: Jean lee la entrada de `findings.md` y confirma el camino de la fase 3 (Lambda o plan B).
 
 ## Fase 1: Contrato y Glue job de la capa de detalle
 `trusted/{yellow,green,hvfhv}` y `trusted/taxi_zones` se generan corriendo el job a mano.
@@ -250,7 +250,7 @@ EventBridge → ingesta → preparación, sin intervención. Si la fase 0 dio `S
 
 - [x] 3.1 `disparar_preparacion(resumen)` según § La Lambda de ingesta dispara siempre, llamada al final del handler antes del `raise` — `punto3-ingesta/lambda_ingesta.py` [independiente]
 - [x] 3.2 `SM_PREPARACION_ARN` en `variables()`, armado con región, cuenta y `RECURSOS["sm_preparacion"]` — `punto3-ingesta/desplegar.py` [independiente]
-- [ ] 3.3 Sección "Encadenamiento" del README del punto: cómo se dispara y el plan B — `punto4-preparacion/README.md` [depende de 3.1]
+- [x] 3.3 Sección "Encadenamiento" del README del punto: cómo se dispara y el plan B — `punto4-preparacion/README.md` [depende de 3.1]
 
 Verificación automática:
 - [x] `.venv/bin/python -c "import ast,sys; ast.parse(open('punto3-ingesta/lambda_ingesta.py').read())"` y `.venv/bin/python punto3-ingesta/desplegar.py` sin errores, con la RDS encendida o al menos con endpoint (ver Riesgos).
@@ -293,11 +293,11 @@ Verificación manual:
 ## Fase 6: README y evidencias
 El Punto 4 queda reproducible desde el repo (Docx ¶26).
 
-- [ ] 6.1 README con la estructura de `punto3-ingesta/README.md`: diagrama, "Por qué así" con lo descartado (las decisiones de este plan), layout de trusted, contrato y banderas, idempotencia, tabla de archivos, Reproducir, Evidencias y Resultados (conteos de `--estado`, tiempos y costo) — `punto4-preparacion/README.md` [independiente]
+- [x] 6.1 README con la estructura de `punto3-ingesta/README.md`: diagrama, "Por qué así" con lo descartado (las decisiones de este plan), layout de trusted, contrato y banderas, idempotencia, tabla de archivos, Reproducir, Evidencias y Resultados (conteos de `--estado`, tiempos y costo) — `punto4-preparacion/README.md` [independiente]
 - [ ] 6.2 Capturas en `punto4-preparacion/evidencias/`: consola de Glue con las corridas, state machine con el `Map`, S3 `trusted/`, un control abierto y terminal de `--estado` [independiente]
 
 Verificación automática:
-- [ ] `grep -rnE '[0-9]{12}' punto4-preparacion/` sin resultados (ningún ID de cuenta).
+- [x] `grep -rnE '[0-9]{12}' punto4-preparacion/` sin resultados (ningún ID de cuenta).
 
 Verificación manual:
 - [ ] Jean sigue "Reproducir" del README en una sesión nueva de Academy y llega al mismo `--estado`.
@@ -406,3 +406,9 @@ Verificación manual:
 - Tiempo de Glue de la recarga: ~219 min de ejecución, ~7,3 DPU-hora, unos USD 3,2 (G.1X con 2 workers, a USD 0,44 por DPU-hora).
 - "Start Lab" volvió a encender la EC2 a las 14:46, y se apagó otra vez. Es la segunda vez que pasa.
 - Verificación de `cbd_congestion_fee` hecha con Athena en el Punto 5 (2026-11-16): `cbd_fee` de `viajes` es NULL en todo 2024 de los tres servicios y tiene valores en todo 2025 de yellow y HVFHV (green: 587.551 de 591.375). `fuera_de_mes` de yellow suma 634 en los 24 meses.
+
+**2026-11-16, review y fase 6:**
+- Desvío del plan: el estado `Catalogar` y `--solo-state-machine` entraron en `punto4-preparacion/desplegar.py` con el commit del Punto 5 (convención "Catalogación"). El paso va después de `Fallidos` y se agrega solo si existe la Lambda `tlc-catalogo`.
+- Camino de falla probado con `aws stepfunctions test-state` sobre la state machine desplegada, sin lanzar Glue: `Fallidos` filtra el ítem con `error` y sigue a `Catalogar`; `Hubo fallas` va a `Fallo` con un mes fallido o con `error_catalogo`, y a `Listo` sin fallas.
+- Limpieza del review: fuera `trusted_prefijo` y `control_prefijo` de `RECURSOS` (sin uso, duplicaban `pendientes.py`); corregido el comentario de concurrencia de `punto3-ingesta/lambda_ingesta.py`.
+- README del Punto 4 escrito (6.1, con la sección Encadenamiento de 3.3). Faltan las capturas (6.2), que saca Jean desde la consola, y la prueba de "Reproducir" en una sesión nueva.

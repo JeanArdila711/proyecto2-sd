@@ -45,8 +45,6 @@ RECURSOS = {
     "glue_job_preparacion": "tlc-preparacion",
     "lambda_pendientes": "tlc-preparacion-pendientes",
     "sm_preparacion": "tlc-preparacion",
-    "trusted_prefijo": "trusted/",
-    "control_prefijo": "trusted/_control/",
     # Workers G.1X por dataset (mínimo de Glue Spark: 2). Todos en 2 mientras no se conozcan los límites de
     # Glue de Vocareum: 2 workers y un job a la vez es lo único que corrió sin desactivar la cuenta (findings.md).
     "glue_workers": {"taxi_zones": 2, "green": 2, "yellow": 2, "hvfhv": 2},

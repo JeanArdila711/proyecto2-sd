@@ -168,8 +168,8 @@ def disparar_preparacion(resumen):
     sfn = boto3.client("stepfunctions", config=Config(connect_timeout=5, read_timeout=10, retries={"max_attempts": 2}))
     try:
         # ponytail: chequeo y arranque no son atómicos. Alcanza mientras la Lambda corra de a una (concurrencia 1,
-        # ver desplegar.py) y nadie corra preparar_local.py --ejecutar en el mismo instante; si dos ejecuciones
-        # coinciden, dos jobs pueden reescribir la misma partición, y el control del último manda.
+        # ver desplegar.py) y nadie corra preparar_local.py --ejecutar en el mismo instante. Si dos ejecuciones
+        # coinciden, MaxConcurrentRuns=1 del job hace que una espere a la otra: a lo sumo un mes se rehace dos veces.
         if sfn.list_executions(stateMachineArn=arn, statusFilter="RUNNING", maxResults=1)["executions"]:
             resumen["preparacion"] = "ya hay una ejecución en curso"
             return
