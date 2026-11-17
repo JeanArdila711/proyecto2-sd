@@ -6,6 +6,10 @@ Lo escribió Jean el 2026-11-16 para el compañero que hace los Puntos 6–8 y p
 
 La demo corre en la cuenta de Jean (convención "Cuenta de la demo"), que tiene los 24 meses (2024-01 a 2025-12) en raw, trusted y el catálogo. Recargar todo en otra cuenta tarda unas 5 h de Glue, así que vos armás una **muestra chica de 3 meses** (2024-01 a 2024-03) en tu cuenta, con el mismo código, y sobre ella desarrollás y probás los Puntos 6, 7 y 8. Cuando esté listo, se lo mandás a Jean (sección "Entrega") y él lo corre una vez en su cuenta sobre los datos completos. Por eso **todo tiene que funcionar en las dos cuentas sin cambiar el código**.
 
+Quién hace qué:
+- **El compañero:** arma la muestra, escribe el código de los Puntos 6, 7 y 8, lo prueba sobre la muestra y lo documenta.
+- **Jean:** baja esos cambios, los corre sobre los datos completos (24 meses) en su cuenta y saca de ahí los resultados finales, las capturas y el Docx. Los números de la muestra solo sirven para probar que el código funciona; no son las respuestas del proyecto.
+
 ## Lo que ya existe y no se toca
 
 Los Puntos 2 a 5 están hechos y verificados. No se modifica su código; si algo de ahí te estorba, se lo decís a Jean.
@@ -35,6 +39,8 @@ Lo que más vas a usar:
 - **Apagar al terminar cada sesión:** `python punto2-fuentes/infra/apagar_infra.py`. "Start Lab" vuelve a encender la EC2 (observado tres veces, `findings.md`): revisala al arrancar.
 
 ## Fase A: muestra de 3 meses en tu cuenta (~45 min, casi todo espera)
+
+La muestra son **3 meses (2024-01, 2024-02 y 2024-03) de los tres servicios: yellow, green y HVFHV**, más la tabla de zonas. Se ingieren con el Punto 3 y se preparan con el Punto 4, igual que en la cuenta de Jean.
 
 Desde la raíz del repo. Antes, lo del README principal: credenciales de tu Learner Lab en `~/.aws/credentials` como perfil `[academy]`, `.venv` con `requirements.txt`, y `cp config.example.env config.env`.
 
@@ -85,7 +91,7 @@ Rúbrica: gráficas (matplotlib, Dash, Power BI, Grafana, etc.) y una app en **S
 ## Entrega: cómo le mandás el trabajo a Jean
 
 - **Una rama por punto** (`punto6-analitica-sql`, `punto7-analitica-pyspark`, `punto8-visualizacion-app`) y un **Pull Request a `main`** por cada una. No hagas push directo a `main`. Jean revisa el PR, lo integra y lo corre en su cuenta.
-- Cada punto lleva su `README.md` con la estructura de `punto3-ingesta/README.md`: qué se hizo, por qué así (y qué se descartó), archivos, reproducir, evidencias y resultados de la muestra. Incluí **el comando exacto que Jean tiene que correr en su cuenta**.
+- Cada punto lleva su `README.md` con la estructura de `punto3-ingesta/README.md`: qué se hizo, por qué así (y qué se descartó), archivos y reproducir. En evidencias y resultados dejá lo de la muestra marcado como **muestra**; Jean lo reemplaza con lo de los datos completos. Incluí **el comando exacto que Jean tiene que correr en su cuenta**.
 - La memoria: al cerrar cada sesión, el journal de `docs/design/puntos6-8-analitica/context.md`, la entrada del CHANGELOG y `design_check.py` sin FAIL (skill `memoria-equipo`). Las decisiones que tomes van a § Rulings de ese `context.md`; si alguna cambia algo de CONTEXT § Conventions, se la consultás a Jean antes.
 - **Avisale a Jean cuando abras cada PR**, con un resumen corto: qué hace, qué probaste en la muestra, qué no pudiste probar (por ejemplo, P6 sin 2025) y qué tiene que correr él.
 - Fecha: entrega y sustentación el **2026-11-19**. Mandá cada punto apenas esté, no los tres juntos al final.
