@@ -19,9 +19,9 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | **3** — Ingesta automática a S3 | EventBridge → Lambda (HVFHV) + SSM a la EC2 (yellow, green, zonas) → `raw/`; corre sola, idempotente y probada en AWS. Punto 3 del Docx con evidencias | Done (`punto3-ingesta`) |
 | **4** — Preparación raw → trusted | Glue + Spark | In progress (`punto4-trusted`) |
 | **5** — Catalogación | Base `tlc_trusted` en el Glue Data Catalog (5 tablas, 144 particiones), Athena = controles, Hive en EMR sobre el mismo catálogo y paso `Catalogar` en la state machine | In progress (`punto5-catalogo`): faltan las capturas |
-| **6** — Analítica SQL | Athena, Hive y SparkSQL respondiendo P1–P6 | Planned - no topic |
-| **7** — Analítica PySpark | PySpark respondiendo P1–P6 | Planned - no topic |
-| **8** — Visualización y app | Gráficas + Streamlit detrás de API Gateway | Planned - no topic |
+| **6** — Analítica SQL | Athena, Hive y SparkSQL respondiendo P1–P6 | In progress (`puntos6-8-analitica`) |
+| **7** — Analítica PySpark | PySpark respondiendo P1–P6 | In progress (`puntos6-8-analitica`) |
+| **8** — Visualización y app | Gráficas + Streamlit detrás de API Gateway | In progress (`puntos6-8-analitica`) |
 
 ## Topics
 
@@ -32,6 +32,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | [`punto3-ingesta`](punto3-ingesta/context.md) | Ingesta automática a la zona raw | Done |
 | [`punto4-trusted`](punto4-trusted/context.md) | Preparación raw → trusted con Glue y Spark | In progress |
 | [`punto5-catalogo`](punto5-catalogo/context.md) | Catalogación en Glue Data Catalog y EMR/Hive | In progress |
+| [`puntos6-8-analitica`](puntos6-8-analitica/context.md) | Analítica SQL y PySpark, visualización y app (compañero, en su cuenta) | In progress |
 
 ## Documents
 
@@ -44,6 +45,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | planificacion | Rúbrica | [rubrica.md](planificacion/current/rubrica.md) |
 | planificacion | Preguntas de negocio y datos | [preguntas-de-negocio.md](planificacion/current/preguntas-de-negocio.md) |
 | planificacion | Fuentes de datos (Punto 2) | [fuentes-de-datos.md](planificacion/current/fuentes-de-datos.md) |
+| puntos6-8-analitica | Encargo del compañero: muestra, Puntos 6–8 y entrega por PR | [encargo.md](puntos6-8-analitica/current/encargo.md) |
 | punto5-catalogo | README del Punto 5 (qué se creó, por qué, reproducir, resultados) | [README.md](../../punto5-catalogo/README.md) |
 | — | Documento de entrega (Docx del enunciado) | [SI3007-262-proyecto2.docx](../../SI3007-262-proyecto2.docx) |
 
@@ -57,7 +59,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | P2: qué tarifa se compara entre yellow y HVFHV | Tarifa base + recargos por milla, razón de sumas (convención "Métrica de P2") | Accepted |
 | P3: denominador del porcentaje que recibe el conductor | (`driver_pay` + propina) / todo lo que paga el pasajero (convención "Métrica de P3") | Accepted |
 | Orquestación del pipeline | Sin Airflow: EventBridge para la ingesta (convención "Ingesta automática"); Step Functions para encadenar los Puntos 4–5, por confirmar | Accepted |
-| Streamlit detrás de API Gateway | Proxy directo a Streamlit / API Gateway → Lambda → Athena consumida por Streamlit | Proposed |
+| Streamlit detrás de API Gateway | Proxy directo a Streamlit / API Gateway → Lambda → Athena consumida por Streamlit; la propone el compañero (`puntos6-8-analitica`), la decide Jean | Proposed |
 | Cuenta de la demo final | Jean (convención "Cuenta de la demo") | Accepted |
 | Restricciones de AWS Academy | Verificadas por CLI (findings; convención "Roles de AWS Academy") | Accepted |
 

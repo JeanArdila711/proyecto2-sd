@@ -4,6 +4,9 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 
 ## 2026-11-16
 
+### puntos6-8-analitica — topic abierto (Jean para el compañero)
+- Los Puntos 6–8 los hace un compañero en su cuenta, sobre una muestra de 3 meses armada con los Puntos 2–5, y los entrega por PR (un PR por punto). Encargo en `puntos6-8-analitica/current/encargo.md`.
+
 ### punto4-trusted — review y README (Jean)
 - `/reppit-review` sin bloqueantes. Camino de falla de la state machine probado con `test-state`, limpieza menor de `RECURSOS` y de un comentario.
 - `punto4-preparacion/README.md` escrito: por qué así y lo descartado, zona trusted, contrato y banderas, idempotencia, encadenamiento, reproducir y resultados. Faltan las capturas.
