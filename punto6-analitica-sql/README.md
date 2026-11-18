@@ -60,7 +60,13 @@ Los resultados quedan en `s3://<bucket>/resultados/punto6/{athena,hive,sparksql}
 
 ## Evidencias
 
-Pendientes (Jean): consola de Athena con una consulta, EMR con el cluster `tlc-analitica` terminado y sus dos steps `COMPLETED`, y la terminal de `comparar.py`, con el ID de la cuenta y el sufijo del bucket ocultos.
+Capturas del 2026-11-18 en la cuenta de la demo. En las de la consola se ocultaron el ID de la cuenta, el usuario y el sufijo del bucket.
+
+| Figura | Qué muestra |
+|---|---|
+| [Athena](evidencias/punto6-1-athena-p1.jpg) | P1 en Athena con los 24 meses: 537 filas, 873 MB escaneados |
+| [EMR](evidencias/punto6-2-emr-hive-sparksql.jpg) | El cluster `tlc-analitica` terminado (47 min), con `punto6-hive` y `punto6-sparksql` `Completed` |
+| [`comparar.py`](evidencias/punto6-3-terminal-comparar.png) | Athena, Hive, SparkSQL y PySpark dan los mismos números en P1–P6 |
 
 ## Resultados — cuenta de la demo, 24 meses (2026-11-18)
 

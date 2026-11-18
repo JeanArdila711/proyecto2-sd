@@ -87,4 +87,12 @@ python punto8-visualizacion-app/desplegar.py --borrar      # borra la EC2, el se
 
 ## Evidencias
 
-Pendientes (Jean): el tablero con dos o tres pestañas, la consola de API Gateway con la API `tlc-resultados` y sus dos rutas, y una respuesta de `GET /resultados/p6` en el navegador.
+Capturas del 2026-11-18 en la cuenta de la demo. En las de la consola se ocultaron el ID de la cuenta, el usuario y el sufijo del bucket.
+
+| Figura | Qué muestra |
+|---|---|
+| [API Gateway](evidencias/punto8-1-apigw-integraciones.jpg) | La HTTP API `tlc-resultados`: `GET /resultados` y `GET /resultados/{pregunta}`, las dos integradas con la Lambda `tlc-resultados` |
+| [`GET /resultados/p6`](evidencias/punto8-2-api-get-p6.jpg) | La respuesta JSON de la API en el navegador (la barra con la URL se agregó a la captura porque el navegador no la muestra) |
+| [Tablero P1](evidencias/punto8-3-tablero-p1.jpg) | Streamlit en `tlc-streamlit`: participación de mercado por mes |
+| [Tablero P2](evidencias/punto8-4-tablero-p2.jpg) | Costo por milla por hora del día |
+| [Tablero P6](evidencias/punto8-5-tablero-p6.jpg) | Viajes hacia la zona de cobro, 2024 frente a 2025, y variación por compañía |

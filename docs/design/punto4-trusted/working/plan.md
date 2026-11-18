@@ -294,7 +294,7 @@ Verificación manual:
 El Punto 4 queda reproducible desde el repo (Docx ¶26).
 
 - [x] 6.1 README con la estructura de `punto3-ingesta/README.md`: diagrama, "Por qué así" con lo descartado (las decisiones de este plan), layout de trusted, contrato y banderas, idempotencia, tabla de archivos, Reproducir, Evidencias y Resultados (conteos de `--estado`, tiempos y costo) — `punto4-preparacion/README.md` [independiente]
-- [ ] 6.2 Capturas en `punto4-preparacion/evidencias/`: consola de Glue con las corridas, state machine con el `Map`, S3 `trusted/`, un control abierto y terminal de `--estado` [independiente]
+- [x] 6.2 Capturas en `punto4-preparacion/evidencias/`: consola de Glue con las corridas, state machine con el `Map`, S3 `trusted/`, un control abierto y terminal de `--estado` [independiente]
 
 Verificación automática:
 - [x] `grep -rnE '[0-9]{12}' punto4-preparacion/` sin resultados (ningún ID de cuenta).

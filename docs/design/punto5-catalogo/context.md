@@ -17,6 +17,8 @@ _Every ruling passes the scope test when it is written (skill `memoria-equipo` �
 
 ## Journal (newest first)
 
+**2026-11-18 (Jean, con Claude):** Capturas en `punto5-catalogo/evidencias/` y enlazadas en el README: base `tlc_trusted` con 5 tablas en Glue, una consulta en Athena (`tlc-consultas`) cuyos totales coinciden con los controles y el cluster `tlc-hive` terminado con su step `Completed`. ID de cuenta, usuario y sufijo del bucket ocultos. Falta: el `/reppit-review` del diff y el Docx.
+
 **2026-11-16, noche (Jean):** Punto 5 implementado y verificado en la cuenta de la demo. `catalogo.py` crea la base, las 5 tablas (tipos del `esquema_detalle` de los controles y de `contrato.viajes()`) y 144 particiones; la segunda corrida no crea nada. `verificar.py`: Athena = controles en todas las particiones (125 MiB escaneados). `emr_hive.py`: un `m5.xlarge` con Hive sobre el Glue Catalog cont처 lo mismo que los controles y se apag처 solo en 778 s; un primer intento fall처 por la zona de disponibilidad (`findings.md`). El `revisor` no encontr처 bloqueantes; se aplicaron sus 7 sugerencias. Siguiente: capturas y review. design_check: 0 FAIL, 0 WARN.
 
 **2026-11-16 (Jean):** Topic abierto para David con el encargo (ahora `archive/encargo.md`): muestra de trusted en su cuenta (fase A) y catalogaci처n (fase B).

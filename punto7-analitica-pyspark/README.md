@@ -51,7 +51,12 @@ python punto6-analitica-sql/comparar.py --con-pyspark
 
 ## Evidencias
 
-Pendientes (Jean): EMR con el cluster terminado y el step `COMPLETED`, y la terminal de `comparar.py --con-pyspark`, con el ID de la cuenta y el sufijo del bucket ocultos.
+Capturas del 2026-11-18 en la cuenta de la demo. En las de la consola se ocultaron el ID de la cuenta, el usuario y el sufijo del bucket.
+
+| Figura | Qué muestra |
+|---|---|
+| [EMR](evidencias/punto7-1-emr-pyspark.jpg) | El cluster `tlc-analitica` del Punto 7 terminado (15 min), con `punto7-pyspark` `Completed` |
+| [`comparar.py --con-pyspark`](evidencias/punto7-2-terminal-comparar.png) | PySpark da los mismos números que los tres motores SQL en P1–P6 |
 
 ## Resultados — cuenta de la demo, 24 meses (2026-11-18)
 

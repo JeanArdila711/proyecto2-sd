@@ -59,7 +59,13 @@ En otra cuenta los mismos comandos funcionan sin cambios: el bucket sale de `con
 
 ## Evidencias
 
-Pendientes: capturas de la consola de Glue (base y tablas), de Athena (una consulta) y de EMR (cluster terminado con el step completado), con el ID de la cuenta y el sufijo del bucket ocultos.
+Capturas del 2026-11-18 en la cuenta de la demo. En las de la consola se ocultaron el ID de la cuenta, el usuario y el sufijo del bucket.
+
+| Figura | Qué muestra |
+|---|---|
+| [Glue Data Catalog](evidencias/punto5-1-glue-catalogo.jpg) | La base `tlc_trusted` con sus 5 tablas Parquet |
+| [Athena](evidencias/punto5-2-athena-consulta.jpg) | Viajes por servicio y año desde `tlc_trusted.viajes` en el workgroup `tlc-consultas`; suman lo mismo que los controles |
+| [EMR](evidencias/punto5-3-emr-hive.jpg) | El cluster `tlc-hive` terminado solo, con el step `hive.q` `Completed` |
 
 ## Resultados (2026-11-16)
 

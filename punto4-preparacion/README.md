@@ -106,7 +106,15 @@ Al terminar la sesión: `python punto3-ingesta/desplegar.py --pausar` y `python 
 
 ## Evidencias
 
-Pendientes: consola de Glue con las corridas, la state machine con el `Map`, S3 `trusted/`, un control abierto y la terminal de `--estado`, con el ID de la cuenta y el sufijo del bucket ocultos.
+Capturas del 2026-11-18 en la cuenta de la demo. En las de la consola se ocultaron el ID de la cuenta, el usuario y el sufijo del bucket.
+
+| Figura | Qué muestra |
+|---|---|
+| [Glue](evidencias/punto4-1-glue-corridas.jpg) | El job `tlc-preparacion`: 150 corridas `Succeeded`, de a una (2 DPU, Glue 5.0) |
+| [Step Functions](evidencias/punto4-2-state-machine-map.jpg) | La ejecución de la recarga completa (4 h 40 min, `Succeeded`), con el `Map` en la iteración 72 (yellow 2025-12) |
+| [S3](evidencias/punto4-3-s3-trusted-viajes.jpg) | `trusted/viajes/servicio=yellow/year=2025/` con sus 12 particiones de mes |
+| [`--estado`](evidencias/punto4-4-terminal-estado.png) | 0 pendientes y 73 controles, con raw = detalle = viajes en los tres servicios y el conteo de cada bandera |
+| [Control](evidencias/punto4-5-terminal-control.png) | El control de yellow 2025-12: filas por capa, banderas, esquema y `job_run_id` |
 
 ## Resultados (2026-11-16)
 
