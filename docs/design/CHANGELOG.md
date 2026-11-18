@@ -4,6 +4,9 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 
 ## 2026-11-18
 
+### Docx — Puntos 4–8 (Jean)
+- `SI3007-262-proyecto2.docx` con los ocho puntos llenos: los Puntos 4–8 llevan arquitectura, decisiones, resultados, reproducción, 26 figuras nuevas (13 a 38) y extractos de código. El Punto 8 incluye las respuestas a las seis preguntas con sus gráficas.
+
 ### Puntos 4–8 — capturas de evidencia (Jean)
 - Capturas de consola y de terminal de los Puntos 4 a 8 en el `evidencias/` de cada punto, enlazadas en su README, con el ID de cuenta, el usuario y el sufijo del bucket ocultos. Ya no quedan capturas pendientes; falta el Docx.
 

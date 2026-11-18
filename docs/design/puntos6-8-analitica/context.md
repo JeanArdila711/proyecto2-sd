@@ -20,6 +20,8 @@ Puntos 6, 7 y 8 de la rúbrica: analítica SQL (Athena, EMR/Hive y SparkSQL), an
 
 ## Journal (newest first)
 
+**2026-11-18 16:40 (Jean, con Claude):** Docx con los Puntos 4 a 8 llenos, con el mismo formato de los Puntos 1–3: arquitectura, decisiones, resultados, cómo reproducir, figuras 13 a 38 (capturas y las seis gráficas) y extractos de código. En el Punto 8 van las respuestas a P1–P6, verificadas contra la API: el handoff decía que la propina de P5 variaba entre 21 % y 24 % según la hora, pero va de 17,9 % (5 a. m.) a 23,7 %. `validate.py` pasa; no se pudo renderizar porque Word no respondió por AppleScript. Siguiente: Jean lo revisa en Word.
+
 **2026-11-18 15:50 (Jean, con Claude):** Capturas de los Puntos 6, 7 y 8 en sus `evidencias/` y enlazadas en los README: Athena con P1 (537 filas), los dos EMR `tlc-analitica` con sus steps `Completed`, `comparar.py --con-pyspark` de nuevo OK en P1–P6, la API `tlc-resultados` con sus dos rutas integradas con la Lambda, `GET /resultados/p6` y tres pestañas del tablero (P1, P2, P6). Para esto se corrió `desplegar.py` (prueba en la EC2 OK) y después `--apagar`. Al cierre: las dos EC2 detenidas, 0 EMR activos. Siguiente: llenar el Docx y avisarle a Andres.
 
 **2026-11-18 01:00 (Jean):** Recálculo con el tope de 100 millas terminado: EMR del Punto 6 en 47 min (Hive 32, SparkSQL 10) y del Punto 7 en 15 min, todos los steps `COMPLETED`; `comparar.py --con-pyspark` OK en P1–P6 en los cuatro motores. Tablas finales en los README de los Puntos 6 y 7. Nada encendido en AWS al cierre. Siguiente: capturas (README § Evidencias de los Puntos 4–8) y el Docx; antes de la sustentación, `punto8-visualizacion-app/desplegar.py` desde la red de la sala.
