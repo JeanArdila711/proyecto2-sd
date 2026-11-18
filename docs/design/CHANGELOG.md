@@ -7,6 +7,7 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 ### puntos6-8-analitica — muestra y Punto 6 (Andres Felipe Prieto)
 - Fase A en la cuenta de Andres: Puntos 2–5 con los scripts sin cambios, 2024-01 a 2024-03 de yellow, green y HVFHV más zonas. 10 controles, 0 pendientes, `verificar.py` OK (70,0 M viajes); 10 jobs de Glue de a uno en 36 min.
 - Punto 6 escrito en `punto6-analitica-sql/` y verificado en la muestra: P1–P6 en Athena, Hive y SparkSQL (EMR de un nodo, se apagó solo en 805 s) con los mismos números (`comparar.py` OK). P6 vacía sin 2025, como se esperaba.
+- Punto 7 en `punto7-analitica-pyspark/`: P1–P6 con DataFrames de PySpark en un EMR de un nodo (464 s); los cuatro motores dan los mismos números (`comparar.py --con-pyspark` OK).
 - Propuesta del Punto 8 para Jean (`puntos6-8-analitica/working/propuesta-punto8.md`), con fuentes de AWS y Streamlit.
 
 ## 2026-11-16
