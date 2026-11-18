@@ -55,6 +55,9 @@ RECURSOS = {
     "lambda_catalogo": "tlc-catalogo",  # último paso de la state machine tlc-preparacion
     "athena_workgroup": "tlc-consultas",
     "athena_prefijo": "athena/",  # resultados de Athena, fuera de raw/ y trusted/
+    # Puntos 6-8: analítica. Los resultados de las preguntas van a resultados/, fuera de raw/ y trusted/
+    "resultados_prefijo": "resultados/",
+    "emr_analitica": "tlc-analitica",  # cluster de un nodo para Hive, SparkSQL y PySpark; se apaga solo
 }
 
 URL_TLC = "https://d37ci6vzurychx.cloudfront.net"
