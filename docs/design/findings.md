@@ -65,7 +65,7 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 ## [regla] Capturas de la consola de AWS: enmascarar el ID de cuenta en todos los frames
 
 - **Date:** 2026-11-11 · **Source topic:** `punto2-fuentes`
-- **Finding:** el repo y el Docx son públicos y la consola muestra el ID de cuenta en el menú y en los ARN, a veces dentro de iframes `about:blank` y con caracteres invisibles entre los dígitos. Antes de cada captura, reemplazar el ID en todos los frames y verificar que no quede; si queda, no guardar la captura. Revisar la imagen a ojo antes de usarla.
+- **Finding:** el repo y el Docx son públicos y la consola muestra el ID de cuenta en el menú y en los ARN, a veces dentro de iframes `about:blank` y con caracteres invisibles entre los dígitos. Antes de cada captura, reemplazar el ID en todos los frames y verificar que no quede; si queda, no guardar la captura. Revisar la imagen a ojo antes de usarla. El usuario de Academy (`voclabs/user…=<login>`, debajo del ID en el menú de la cuenta) también se oculta; en las capturas del 2026-11-18 se tapó después sobre la imagen, y en el Docx se recortó la barra superior de la consola.
 - **Provenance:** primera tanda de capturas del Punto 2: el ARN de la EC2 se filtró hasta aplicar la máscara por frame (sesión 2026-11-11).
 
 ## [hecho] AWS Academy: EventBridge → Lambda → SSM funciona con `LabRole`
