@@ -5,6 +5,7 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 ## 2026-11-18
 
 ### Docx — Puntos 4–8 (Jean)
+- Versión corta a pedido de Jean: los Puntos 4–8 quedan en unas 8 páginas, con 10 figuras y las respuestas a las seis preguntas en una tabla; el documento entero da unas 20 páginas.
 - `SI3007-262-proyecto2.docx` con los ocho puntos llenos: los Puntos 4–8 llevan arquitectura, decisiones, resultados, reproducción, 26 figuras nuevas (13 a 38) y extractos de código. El Punto 8 incluye las respuestas a las seis preguntas con sus gráficas.
 
 ### Puntos 4–8 — capturas de evidencia (Jean)
