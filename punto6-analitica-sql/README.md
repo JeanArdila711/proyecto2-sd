@@ -62,9 +62,9 @@ Los resultados quedan en `s3://<bucket>/resultados/punto6/{athena,hive,sparksql}
 
 Pendientes (Jean): consola de Athena con una consulta, EMR con el cluster `tlc-analitica` terminado y sus dos steps `COMPLETED`, y la terminal de `comparar.py`, con el ID de la cuenta y el sufijo del bucket ocultos.
 
-## Resultados — cuenta de la demo, 24 meses (2026-11-17)
+## Resultados — cuenta de la demo, 24 meses (2026-11-18)
 
-> **Pendiente:** P2 y P5 ganaron un tope de 100 millas el 2026-11-18 (`findings.md`, "Calidad yellow"). Athena ya está recalculado; la tabla de `comparar.py` de abajo es de antes del corte y se reemplaza cuando terminen los EMR.
+Con el tope de 100 millas en P2 y P5 (`findings.md`, "Calidad yellow"): sin él, 2.829 viajes de yellow con miles de millas sumaban el 41 % de sus millas y el taxi amarillo salía como el más barato por milla (4,30 USD) cuando es el más caro (7,31, frente a 6,44 de Uber y 6,34 de Lyft).
 
 2024-01 a 2025-12 de yellow, green y HVFHV en `tlc_trusted` (Punto 5).
 
@@ -72,15 +72,15 @@ Pendientes (Jean): consola de Athena con una consulta, EMR con el cluster `tlc-a
 
 ```
 p1: 537 filas, 872.6 MiB escaneados, 5.5 s
-p2: 18596 filas, 4,657.3 MiB escaneados, 9.6 s
+p2: 18596 filas, 4,682.4 MiB escaneados, 9.2 s
 p3: 253 filas, 4,667.4 MiB escaneados, 6.5 s
 p4: 249 filas, 1,634.3 MiB escaneados, 6.5 s
-p5: 291 filas, 1,301.2 MiB escaneados, 8.2 s
+p5: 291 filas, 1,636.8 MiB escaneados, 8.8 s
 p6: 96 filas, 1,425.8 MiB escaneados, 8.9 s
 Escaneado en total: 14,558.5 MiB
 ```
 
-`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 2866 s (48 min), con los dos steps `COMPLETED`. Hive tardó entre 3 y 6 min por pregunta; SparkSQL, entre 55 y 128 s.
+`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 47 min, con los dos steps `COMPLETED`: Hive en 32 min y SparkSQL en 10.
 
 `comparar.py --con-pyspark` (después del [Punto 7](../punto7-analitica-pyspark/)):
 

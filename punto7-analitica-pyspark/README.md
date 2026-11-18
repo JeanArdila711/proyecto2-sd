@@ -53,22 +53,23 @@ python punto6-analitica-sql/comparar.py --con-pyspark
 
 Pendientes (Jean): EMR con el cluster terminado y el step `COMPLETED`, y la terminal de `comparar.py --con-pyspark`, con el ID de la cuenta y el sufijo del bucket ocultos.
 
-## Resultados — cuenta de la demo, 24 meses (2026-11-17)
+## Resultados — cuenta de la demo, 24 meses (2026-11-18)
 
-`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 914 s (15 min) con el step `COMPLETED`.
+`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 927 s (15 min) con el step `COMPLETED`.
 
 ```
-p1: 537 filas en 72.5 s
-p2: 18596 filas en 124.3 s
-p3: 253 filas en 106.8 s
-p4: 249 filas en 60.3 s
-p5: 291 filas en 59.1 s
-p6: 96 filas en 131.3 s
+p1: 537 filas en 76.4 s
+p2: 18596 filas en 126.9 s
+p3: 253 filas en 109.5 s
+p4: 249 filas en 63.3 s
+p5: 291 filas en 64.8 s
+p6: 96 filas en 125.1 s
 ```
 
-`comparar.py --con-pyspark`: los cuatro motores dan los mismos números en las seis preguntas (tabla en el [README del Punto 6](../punto6-analitica-sql/README.md#resultados--cuenta-de-la-demo-24-meses-2026-11-17)).
+`comparar.py --con-pyspark`: los cuatro motores dan los mismos números en las seis preguntas (tabla en el [README del Punto 6](../punto6-analitica-sql/README.md#resultados--cuenta-de-la-demo-24-meses-2026-11-18)).
 
 - **P5:** los joins con `taxi_zones` se hacen solo en las ramas que los necesitan (`zona_origen` con el origen, `aeropuerto` con origen y destino), igual que el SQL. Así, un `pulocationid` que no esté en la tabla de zonas no cambia los conteos de `hora` ni de `distancia`.
+- **P2 y P5:** el mismo tope de 100 millas que el SQL (`MILLAS_MAX`).
 - **P6:** misma zona de cobro que el SQL (38 zonas), con el umbral comparado con enteros (`2 * con_cargo >= internos`).
 - La base y la ruta de salida llegan por argumentos desde `emr.py`, que las toma de `comun/config.py`.
 
