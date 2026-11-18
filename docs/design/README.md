@@ -59,7 +59,7 @@ Una fase por punto de la rúbrica (`planificacion/current/rubrica.md`).
 | P2: qué tarifa se compara entre yellow y HVFHV | Tarifa base + recargos por milla, razón de sumas (convención "Métrica de P2") | Accepted |
 | P3: denominador del porcentaje que recibe el conductor | (`driver_pay` + propina) / todo lo que paga el pasajero (convención "Métrica de P3") | Accepted |
 | Orquestación del pipeline | Sin Airflow: EventBridge para la ingesta (convención "Ingesta automática"); Step Functions para encadenar los Puntos 4–5, por confirmar | Accepted |
-| Streamlit detrás de API Gateway | Proxy directo a Streamlit (descartado: el WebSocket de Streamlit no pasa, según la documentación y la prueba en Academy del 2026-11-17) / API Gateway → Lambda con los resultados guardados, consumida por Streamlit. Propuesta con fuentes en `puntos6-8-analitica/working/propuesta-punto8.md`; la decide Jean | Proposed |
+| Streamlit detrás de API Gateway | Proxy directo a Streamlit (descartado: el WebSocket de Streamlit no pasa, según la documentación y la prueba en Academy del 2026-11-17) / API Gateway → Lambda con los resultados guardados, consumida por Streamlit. Propuesta con fuentes en `puntos6-8-analitica/working/propuesta-punto8.md`; la decide Jean | Accepted 2026-11-18 (ruling "Punto 8: Streamlit como cliente de API Gateway" en `puntos6-8-analitica`) |
 | Cuenta de la demo final | Jean (convención "Cuenta de la demo") | Accepted |
 | Restricciones de AWS Academy | Verificadas por CLI (findings; convención "Roles de AWS Academy") | Accepted |
 

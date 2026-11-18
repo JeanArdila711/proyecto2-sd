@@ -5,7 +5,8 @@
 --   promedio en dólares. Una sola tabla larga con una dimensión por bloque, para comparar cuánto se
 --   mueve la propina con cada factor.
 -- Banderas: NOT monto_negativo, NOT duracion_invalida, NOT distancia_invalida, NOT zona_desconocida
---   y NOT fuera_de_mes; además fare_amount > 0 para que el porcentaje tenga sentido.
+--   y NOT fuera_de_mes; además fare_amount > 0 para que el porcentaje tenga sentido y
+--   trip_distance <= 100, el mismo corte de P2 (hay viajes de yellow con miles de millas).
 -- Aeropuerto: tarifa de JFK o Newark (ratecodeid 2 o 3) o un extremo en una zona con
 --   service_zone 'Airports' o 'EWR'.
 -- {TEXTO} lo reemplaza consultas.py por el tipo texto de cada motor (VARCHAR en Athena, STRING en Hive y Spark).
@@ -17,7 +18,7 @@ FROM (
            y.tip_amount, y.fare_amount
     FROM yellow y
     WHERE y.payment_type = 1 AND y.fare_amount > 0 AND NOT y.fuera_de_mes AND NOT y.monto_negativo
-      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida
+      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida AND y.trip_distance <= 100
     UNION ALL
     SELECT 'distancia' AS dimension,
            CASE WHEN y.trip_distance < 1 THEN '1. menos de 1 mi'
@@ -25,18 +26,18 @@ FROM (
                 WHEN y.trip_distance < 5 THEN '3. 3 a 5 mi'
                 WHEN y.trip_distance < 10 THEN '4. 5 a 10 mi'
                 WHEN y.trip_distance < 20 THEN '5. 10 a 20 mi'
-                ELSE '6. 20 mi o más' END AS valor,
+                ELSE '6. 20 a 100 mi' END AS valor,
            y.tip_amount, y.fare_amount
     FROM yellow y
     WHERE y.payment_type = 1 AND y.fare_amount > 0 AND NOT y.fuera_de_mes AND NOT y.monto_negativo
-      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida
+      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida AND y.trip_distance <= 100
     UNION ALL
     SELECT 'zona_origen' AS dimension, concat(zo.borough, ' / ', zo.zone) AS valor,
            y.tip_amount, y.fare_amount
     FROM yellow y
     JOIN taxi_zones zo ON zo.locationid = y.pulocationid
     WHERE y.payment_type = 1 AND y.fare_amount > 0 AND NOT y.fuera_de_mes AND NOT y.monto_negativo
-      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida
+      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida AND y.trip_distance <= 100
     UNION ALL
     SELECT 'aeropuerto' AS dimension,
            CASE WHEN y.ratecodeid IN (2, 3) OR zo.service_zone IN ('Airports', 'EWR')
@@ -47,7 +48,7 @@ FROM (
     JOIN taxi_zones zo ON zo.locationid = y.pulocationid
     JOIN taxi_zones zd ON zd.locationid = y.dolocationid
     WHERE y.payment_type = 1 AND y.fare_amount > 0 AND NOT y.fuera_de_mes AND NOT y.monto_negativo
-      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida
+      AND NOT y.duracion_invalida AND NOT y.distancia_invalida AND NOT y.zona_desconocida AND y.trip_distance <= 100
 ) t
 GROUP BY dimension, valor
 ORDER BY dimension, valor

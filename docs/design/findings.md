@@ -109,3 +109,15 @@ Hechos durables que sirven a otros topics. Un bloque por finding, solo con contr
 - **Date:** 2026-11-16 · **Source topic:** `punto5-catalogo`
 - **Finding:** en la cuenta de la demo, un cluster `emr-7.14.0` de un solo `m5.xlarge` (primary, sin core), con `EMR_DefaultRole` / `EMR_EC2_DefaultRole` y la clasificación `hive-site` `hive.metastore.client.factory.class = com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory`, arrancó, corrió un step de Hive (`command-runner.jar hive-script --run-hive-script --args -f s3://...`) y se apagó solo en 778 s (`KeepJobFlowAliveWhenNoSteps=False`). Hive leyó las tablas creadas con `glue.create_table`, con particiones `string` ("01") y Parquet de Spark 3.5 con timestamps INT96. `EMR_EC2_DefaultRole` tiene `AmazonElasticMapReduceforEC2Role`, que incluye los permisos de Glue. No todas las zonas de us-east-1 ofrecen `m5.xlarge`: el primer intento falló a los 31 s ("instance type m5.xlarge is not supported in the requested availability zone"), y hay que elegir la subred con `describe_instance_type_offerings`. La cuenta no se desactivó. *Sin verificar*: si clusters más grandes o varios a la vez pasan los límites de Vocareum.
 - **Provenance:** `punto5-catalogo/emr_hive.py --lanzar` (clusters del 2026-11-16) y `aws iam list-attached-role-policies --role-name EMR_EC2_DefaultRole`.
+
+## [hecho] Calidad yellow: viajes con miles de millas dominan el total de millas
+
+- **Date:** 2026-11-18 · **Source topic:** `puntos6-8-analitica`
+- **Finding:** en `viajes` de 2024–2025, ya filtrado por las banderas de calidad, hay 2.829 viajes de yellow de más de 100 millas (0,003 % de 83,2 M) que suman el 41 % de todas las millas de yellow; hay viajes con 2.500 millas en promedio. `distancia_invalida` solo descarta distancias de 0 o menos. Cualquier métrica por milla de yellow sin un tope de distancia sale mal: el costo por milla de yellow daba 4,30 USD y con `millas <= 100` da 7,31 (más caro que Uber y Lyft, no más barato). En Uber y Lyft los viajes de más de 100 millas son menos del 0,01 % de las millas. El corte da lo mismo en 50 que en 100. P2 y P5 aplican `<= 100`.
+- **Provenance:** consulta de Athena sobre `tlc_trusted.viajes` en la cuenta de la demo, 2026-11-18.
+
+## [hecho] Propinas: zonas de Brooklyn con la propina con tarjeta casi siempre en 0
+
+- **Date:** 2026-11-18 · **Source topic:** `puntos6-8-analitica`
+- **Finding:** en yellow, con `payment_type = 1`, los viajes que salen de Brownsville, Canarsie, East New York y Flatbush/Ditmas Park registran `tip_amount = 0` en el 97–99 % de los casos (Manhattan: 5 %). Son viajes largos (~7–8 millas, ~31–35 USD), sin tarifa negociada ni vendor 6. Con los datos de la TLC no se distingue si no hubo propina o si no quedó registrada (por ejemplo, viajes despachados); se presenta con esa advertencia y no como efecto de la zona.
+- **Provenance:** consulta de Athena sobre `tlc_trusted.yellow` en la cuenta de la demo, 2026-11-18.

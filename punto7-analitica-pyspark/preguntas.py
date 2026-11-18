@@ -16,6 +16,7 @@ from pyspark.sql import SparkSession, Window
 from pyspark.sql import functions as F
 
 ZONAS_DESCONOCIDAS = (264, 265)
+MILLAS_MAX = 100  # P2 y P5: yellow tiene viajes con miles de millas (ver p2_costo_milla.sql)
 
 
 def no(*banderas):
@@ -52,7 +53,8 @@ def p2(spark):
     return (spark.table("viajes")
             .where(F.col("servicio").isin("yellow", "hvfhv") & F.col("compania").isin("yellow", "uber", "lyft")
                    & no("fuera_de_mes", "duracion_invalida", "distancia_invalida", "monto_negativo",
-                        "zona_desconocida"))
+                        "zona_desconocida")
+                   & (F.col("millas") <= MILLAS_MAX))
             .groupBy("compania", "pu_zona_id", "pu_borough", "pu_zona", "pickup_hour")
             .agg(F.count("*").alias("viajes"),
                  F.round(F.sum("millas"), 2).alias("millas"),
@@ -104,13 +106,14 @@ def p5(spark):
     base = (spark.table("yellow")
             .where((F.col("payment_type") == 1) & (F.col("fare_amount") > 0)
                    & no("fuera_de_mes", "monto_negativo", "duracion_invalida", "distancia_invalida",
-                        "zona_desconocida")))
+                        "zona_desconocida")
+                   & (F.col("trip_distance") <= MILLAS_MAX)))
     # Igual que el SQL: hora y distancia sin join; zona_origen une el origen; aeropuerto, origen y destino
     con_origen = base.join(F.broadcast(zo), "pulocationid")
     con_ambas = con_origen.join(F.broadcast(zd), "dolocationid")
     d = F.col("trip_distance")
     tramo = (F.when(d < 1, "1. menos de 1 mi").when(d < 3, "2. 1 a 3 mi").when(d < 5, "3. 3 a 5 mi")
-             .when(d < 10, "4. 5 a 10 mi").when(d < 20, "5. 10 a 20 mi").otherwise("6. 20 mi o más"))
+             .when(d < 10, "4. 5 a 10 mi").when(d < 20, "5. 10 a 20 mi").otherwise("6. 20 a 100 mi"))
     aeropuertos = ["Airports", "EWR"]
     es_aeropuerto = (F.col("ratecodeid").isin(2, 3) | F.col("o_service").isin(*aeropuertos)
                      | F.col("d_service").isin(*aeropuertos))

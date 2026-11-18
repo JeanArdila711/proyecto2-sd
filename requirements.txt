@@ -1,1 +1,4 @@
 boto3>=1.35
+# Punto 8, gráficas estáticas (graficas.py). La app de Streamlit tiene los suyos en punto8-visualizacion-app/app/
+pandas>=2.2
+matplotlib>=3.9

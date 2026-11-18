@@ -2,6 +2,13 @@
 
 Newest first. One `##` heading per day with activity. Write outcomes, not implementation steps. This file is appended to, never rewritten, and is not loaded by default.
 
+## 2026-11-18
+
+### puntos6-8-analitica — Punto 8 desplegado y corte de distancia en P2/P5 (Jean)
+- Punto 8 en la cuenta de la demo: API Gateway → Lambda `tlc-resultados` con los resultados de P1–P6, Streamlit en la EC2 `tlc-streamlit` como cliente de esa API y seis gráficas estáticas con matplotlib. Decisión abierta "Streamlit detrás de API Gateway" aceptada con ese diseño.
+- P2 y P5 con tope de 100 millas: 2.829 viajes de yellow con miles de millas sumaban el 41 % de sus millas. Antes, el taxi amarillo salía como el más barato por milla (4,30 USD); ahora sale como el más caro (7,31, frente a 6,44 de Uber y 6,34 de Lyft). Convención "Métrica de P2" actualizada.
+- Athena recalculado con el corte; Hive, SparkSQL y PySpark en recálculo al cierre (falta `comparar.py --con-pyspark`).
+
 ## 2026-11-17
 
 ### puntos6-8-analitica — revisión y corrida con 24 meses (Jean)

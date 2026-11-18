@@ -58,6 +58,11 @@ RECURSOS = {
     # Puntos 6-8: analítica. Los resultados de las preguntas van a resultados/, fuera de raw/ y trusted/
     "resultados_prefijo": "resultados/",
     "emr_analitica": "tlc-analitica",  # cluster de un nodo para Hive, SparkSQL y PySpark; se apaga solo
+    # Punto 8: API Gateway → Lambda con los resultados, y Streamlit en una EC2 que consume esa API
+    "lambda_resultados": "tlc-resultados",
+    "api_resultados": "tlc-resultados",
+    "ec2_streamlit": "tlc-streamlit",
+    "sg_streamlit": "tlc-streamlit-sg",
 }
 
 URL_TLC = "https://d37ci6vzurychx.cloudfront.net"

@@ -64,6 +64,8 @@ Pendientes (Jean): consola de Athena con una consulta, EMR con el cluster `tlc-a
 
 ## Resultados — cuenta de la demo, 24 meses (2026-11-17)
 
+> **Pendiente:** P2 y P5 ganaron un tope de 100 millas el 2026-11-18 (`findings.md`, "Calidad yellow"). Athena ya está recalculado; la tabla de `comparar.py` de abajo es de antes del corte y se reemplaza cuando terminen los EMR.
+
 2024-01 a 2025-12 de yellow, green y HVFHV en `tlc_trusted` (Punto 5).
 
 `athena.py`:
