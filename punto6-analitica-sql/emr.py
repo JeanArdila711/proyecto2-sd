@@ -18,7 +18,6 @@ Uso (desde la raíz del repo):
 import argparse
 import json
 import sys
-import time
 from pathlib import Path
 
 DIR = Path(__file__).resolve().parent
@@ -55,7 +54,8 @@ def solicitud(bucket, subnet):
             {"Name": "punto6-sparksql", "ActionOnFailure": "CONTINUE", "HadoopJarStep": {
                 "Jar": "command-runner.jar",
                 "Args": ["spark-submit", "--deploy-mode", "client", f"s3://{bucket}/{PREFIJO}sparksql.py",
-                         bucket, *preguntas]}},
+                         R["glue_base"], f"s3://{bucket}/{PREFIJO}sparksql/",
+                         f"s3://{bucket}/{consultas.RESULTADOS}sparksql/", *preguntas]}},
         ],
         JobFlowRole="EMR_EC2_DefaultRole",
         ServiceRole="EMR_DefaultRole",
@@ -76,6 +76,8 @@ def publicar(s3, bucket):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--lanzar", action="store_true")
+    p.add_argument("--tope-min", type=int, default=180,
+                   help="minutos antes de terminar el cluster a la fuerza (por defecto 180)")
     args = p.parse_args()
     aws = config.sesion(config.cargar())
     emr, s3 = aws.client("emr"), aws.client("s3")
@@ -90,14 +92,13 @@ def main():
         print("No se lanzó nada. Para lanzar: --lanzar")
         return
     publicar(s3, bucket)
+    for motor in ("hive", "sparksql"):
+        emr_hive.vaciar(s3, bucket, f"{consultas.RESULTADOS}{motor}/")
     cluster = emr.run_job_flow(**req)["JobFlowId"]
-    print(f"Cluster {cluster} lanzado; se apaga solo al terminar los steps.", flush=True)
-    inicio = time.time()
-    while (c := emr.describe_cluster(ClusterId=cluster)["Cluster"])["Status"]["State"] not in (
-            "TERMINATED", "TERMINATED_WITH_ERRORS"):
-        print(f"  {c['Status']['State']}... {time.time() - inicio:.0f} s", flush=True)
-        time.sleep(30)
-    print(f"Cluster {c['Status']['State']} en {time.time() - inicio:.0f} s "
+    print(f"Cluster {cluster} lanzado; se apaga solo al terminar los steps (tope {args.tope_min} min). "
+          f"Si esta terminal se corta: aws emr terminate-clusters --cluster-ids {cluster}", flush=True)
+    c, segundos = emr_hive.esperar(emr, cluster, args.tope_min)
+    print(f"Cluster {c['Status']['State']} en {segundos:.0f} s "
           f"({c['Status']['StateChangeReason'].get('Message', '')})")
     ok = True
     for step in reversed(emr.list_steps(ClusterId=cluster)["Steps"]):  # list_steps viene del más nuevo

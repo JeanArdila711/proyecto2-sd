@@ -4,6 +4,12 @@ Newest first. One `##` heading per day with activity. Write outcomes, not implem
 
 ## 2026-11-17
 
+### puntos6-8-analitica — revisión y corrida con 24 meses (Jean)
+- PR #1 y #2 revisados: sin bloqueantes en P1–P5. Convención "Zonas de cobro por congestión" cambiada: antes, zonas de destino con algún viaje de 2025 con cargo (261 zonas); ahora, zonas donde al menos la mitad de los viajes internos de 2025 pagan el cargo (38, todas de Manhattan).
+- Arreglos: tope de tiempo en los EMR, prefijos de resultados vaciados antes de cada corrida, `comparar.py` estricto con preguntas vacías, rutas desde `RECURSOS` y joins de P5 en PySpark iguales al SQL.
+- Puntos 6 y 7 corridos en la cuenta de la demo con los 24 meses: Athena, Hive, SparkSQL y PySpark dan los mismos números en P1–P6. EMR del Punto 6 en 48 min y del Punto 7 en 15 min.
+- Prueba del Punto 8 en Academy: API Gateway (HTTP API, `HTTP_PROXY`) deja pasar el HTTP de Streamlit pero el WebSocket responde 400. Confirma la propuesta de Andres.
+
 ### puntos6-8-analitica — muestra y Punto 6 (Andres Felipe Prieto)
 - Fase A en la cuenta de Andres: Puntos 2–5 con los scripts sin cambios, 2024-01 a 2024-03 de yellow, green y HVFHV más zonas. 10 controles, 0 pendientes, `verificar.py` OK (70,0 M viajes); 10 jobs de Glue de a uno en 36 min.
 - Punto 6 escrito en `punto6-analitica-sql/` y verificado en la muestra: P1–P6 en Athena, Hive y SparkSQL (EMR de un nodo, se apagó solo en 805 s) con los mismos números (`comparar.py` OK). P6 vacía sin 2025, como se esperaba.

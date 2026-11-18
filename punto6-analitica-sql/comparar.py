@@ -86,14 +86,21 @@ def main():
     for pregunta in consultas.preguntas():
         resultados = {}
         for motor, (sep, enc) in motores.items():
-            raiz = "resultados/punto7/" if motor == "pyspark" else consultas.RESULTADOS
-            _, filas = leer(s3, bucket, f"{raiz}{motor}/{pregunta}/", sep, enc)
+            prefijo = (consultas.RESULTADOS_PYSPARK if motor == "pyspark"
+                       else f"{consultas.RESULTADOS}{motor}/") + f"{pregunta}/"
+            _, filas = leer(s3, bucket, prefijo, sep, enc)
             resultados[motor] = sorted(([normal(v) for v in f] for f in filas), key=clave)
         base = resultados["athena"]
+        # Vacío en todos: puede ser legítimo (P6 en una muestra sin 2025) y se avisa. Vacío en algunos: ese
+        # motor no corrió o falló (vaciar() borra el prefijo antes de cada corrida), así que es un error.
+        vacios = [m for m, r in resultados.items() if not r]
         distintos = [m for m, r in resultados.items() if m != "athena" and not iguales(base, r)]
-        malas += bool(distintos)
+        todos_vacios = len(vacios) == len(resultados)
+        malas += bool(distintos) and not todos_vacios
         print(f"{pregunta:<9}" + "".join(f"{len(r):>10}" for r in resultados.values())
-              + ("  OK" if not distintos else f"  DIFERENTE en {', '.join(distintos)}"))
+              + ("  AVISO: vacía en todos los motores" if todos_vacios
+                 else f"  SIN FILAS en {', '.join(vacios)}" if vacios
+                 else f"  DIFERENTE en {', '.join(distintos)}" if distintos else "  OK"))
     print("OK: los motores dan los mismos números" if not malas else f"{malas} preguntas con diferencias")
     sys.exit(1 if malas else 0)
 

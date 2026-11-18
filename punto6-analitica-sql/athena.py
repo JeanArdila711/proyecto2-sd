@@ -17,12 +17,13 @@ import time
 from pathlib import Path
 
 DIR = Path(__file__).resolve().parent
-sys.path[:0] = [str(DIR.parent), str(DIR)]
+sys.path[:0] = [str(DIR.parent), str(DIR), str(DIR.parent / "punto5-catalogo")]
 
 from comun import config  # noqa: E402
 from comun.config import RECURSOS as R  # noqa: E402
 
 import consultas  # noqa: E402
+import emr_hive  # noqa: E402  (vaciar)
 
 
 def correr(athena, sql):
@@ -49,6 +50,8 @@ def main():
     aws = config.sesion(config.cargar())
     athena, s3 = aws.client("athena"), aws.client("s3")
     bucket = config.nombre_bucket(aws)
+    for pregunta in elegidas:  # si una consulta falla, las siguientes no quedan con lo de otra corrida
+        emr_hive.vaciar(s3, bucket, f"{consultas.RESULTADOS}athena/{pregunta}/")
     total = 0
     for pregunta in elegidas:
         inicio = time.time()

@@ -12,7 +12,18 @@ Andres Felipe Prieto, 2026-11-17. Decisión abierta del encargo (fase D): la pro
 - **Las HTTP API y REST API de API Gateway no tienen soporte de WebSocket.** La tabla comparativa (https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html) no lo lista para ninguna de las dos, y la integración HTTP proxy describe un paso de request/response: "API Gateway passes the entire request and response between the frontend and the backend" (https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-http.html). Ninguna página menciona el `Upgrade` de WebSocket.
 - **Las WebSocket API de API Gateway no pasan el socket crudo al backend:** "The WebSocket API invokes your backend based on the content of the messages it receives from client apps", con rutas `$connect`, `$disconnect` y `$default` (https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-overview.html). Streamlit habla su propio protocolo sobre un WebSocket y no encaja en ese modelo de rutas.
 
-Conclusión: **un proxy directo de API Gateway a Streamlit no está soportado por lo documentado**. *Sin probar* en Academy; no se gastó tiempo en intentarlo.
+Conclusión: **un proxy directo de API Gateway a Streamlit no está soportado por lo documentado**.
+
+## Prueba en Academy (Jean, 2026-11-17)
+
+Con `punto8-visualizacion-app/prueba_apigw_streamlit.py` en la cuenta de la demo: una EC2 t3.small con Streamlit y una HTTP API con integración `HTTP_PROXY` (`ANY /` y `ANY /{proxy+}`). Se borró todo al terminar.
+
+| | `GET /` | `GET /_stcore/health` | WebSocket `/_stcore/stream` |
+|---|---|---|---|
+| Directo a la EC2 | 200 | 200 `ok` | **101** (conecta) |
+| Por API Gateway | 200 | 200 `ok` | **400** |
+
+El proxy HTTP funciona, pero el handshake de WebSocket no pasa. En el navegador, por API Gateway la app se queda en el esqueleto de carga, y directo carga completa (capturas en `punto8-visualizacion-app/evidencias/`). Esto confirma la conclusión con evidencia propia.
 
 ## Propuesta
 

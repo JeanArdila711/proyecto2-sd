@@ -5,7 +5,9 @@ mismas definiciones del Punto 6 (punto6-analitica-sql/consultas/pN_*.sql): misma
 y mismas columnas de salida, para que comparar.py pueda contrastarlas con Athena, Hive y SparkSQL.
 Cada resultado queda como un CSV con encabezado en s3://<bucket>/resultados/punto7/pyspark/{pregunta}/.
 
-  spark-submit preguntas.py <bucket> [p1 ... p6]
+  spark-submit preguntas.py <base> <s3://.../resultados/punto7/pyspark/> [p1 ... p6]
+
+La base y el destino los pasa emr.py desde comun/config.py, para no repetirlos aquí.
 """
 import sys
 import time
@@ -102,8 +104,10 @@ def p5(spark):
     base = (spark.table("yellow")
             .where((F.col("payment_type") == 1) & (F.col("fare_amount") > 0)
                    & no("fuera_de_mes", "monto_negativo", "duracion_invalida", "distancia_invalida",
-                        "zona_desconocida"))
-            .join(F.broadcast(zo), "pulocationid").join(F.broadcast(zd), "dolocationid"))
+                        "zona_desconocida")))
+    # Igual que el SQL: hora y distancia sin join; zona_origen une el origen; aeropuerto, origen y destino
+    con_origen = base.join(F.broadcast(zo), "pulocationid")
+    con_ambas = con_origen.join(F.broadcast(zd), "dolocationid")
     d = F.col("trip_distance")
     tramo = (F.when(d < 1, "1. menos de 1 mi").when(d < 3, "2. 1 a 3 mi").when(d < 5, "3. 3 a 5 mi")
              .when(d < 10, "4. 5 a 10 mi").when(d < 20, "5. 10 a 20 mi").otherwise("6. 20 mi o más"))
@@ -111,14 +115,14 @@ def p5(spark):
     es_aeropuerto = (F.col("ratecodeid").isin(2, 3) | F.col("o_service").isin(*aeropuertos)
                      | F.col("d_service").isin(*aeropuertos))
     dimensiones = {
-        "hora": F.lpad(F.col("pickup_hour").cast("string"), 2, "0"),
-        "distancia": tramo,
-        "zona_origen": F.concat(F.col("o_borough"), F.lit(" / "), F.col("o_zone")),
-        "aeropuerto": F.when(es_aeropuerto, "aeropuerto").otherwise("no aeropuerto"),
+        "hora": (base, F.lpad(F.col("pickup_hour").cast("string"), 2, "0")),
+        "distancia": (base, tramo),
+        "zona_origen": (con_origen, F.concat(F.col("o_borough"), F.lit(" / "), F.col("o_zone"))),
+        "aeropuerto": (con_ambas, F.when(es_aeropuerto, "aeropuerto").otherwise("no aeropuerto")),
     }
     largo = None
-    for nombre, valor in dimensiones.items():
-        parte = base.select(F.lit(nombre).alias("dimension"), valor.alias("valor"), "tip_amount", "fare_amount")
+    for nombre, (df, valor) in dimensiones.items():
+        parte = df.select(F.lit(nombre).alias("dimension"), valor.alias("valor"), "tip_amount", "fare_amount")
         largo = parte if largo is None else largo.unionByName(parte)
     return (largo.groupBy("dimension", "valor")
             .agg(F.count("*").alias("viajes"),
@@ -130,8 +134,14 @@ def p5(spark):
 def p6(spark):
     """Viajes que terminan en la zona de cobro por congestión, por año, mes y compañía."""
     viajes = spark.table("viajes")
-    zonas = (viajes.where((F.col("year") == "2025") & (F.col("cbd_fee") > 0))
-             .select("do_zona_id").distinct())
+    # Zonas donde al menos la mitad de los viajes internos (origen = destino) de 2025 pagan el cargo
+    zonas = (viajes.where((F.col("year") == "2025") & (F.col("pu_zona_id") == F.col("do_zona_id"))
+                          & no("fuera_de_mes", "zona_desconocida"))
+             .groupBy("do_zona_id")
+             .agg(F.sum(F.when(F.col("cbd_fee") > 0, 1).otherwise(0)).alias("con_cargo"),
+                  F.count("*").alias("internos"))
+             .where(2 * F.col("con_cargo") >= F.col("internos"))  # enteros, igual que el SQL
+             .select("do_zona_id"))
     agregado = (viajes.where(no("fuera_de_mes", "zona_desconocida"))
                 .join(zonas, "do_zona_id", "left_semi")  # semi join: filtra, no agrega columnas
                 .groupBy("year", "month", "compania").agg(F.count("*").alias("viajes")))
@@ -145,13 +155,13 @@ PREGUNTAS = {"p1": p1, "p2": p2, "p3": p3, "p4": p4, "p5": p5, "p6": p6}
 
 
 def main():
-    bucket, elegidas = sys.argv[1], sys.argv[2:] or list(PREGUNTAS)
+    base, salida, elegidas = sys.argv[1], sys.argv[2], sys.argv[3:] or list(PREGUNTAS)
     spark = SparkSession.builder.appName("tlc-punto7-pyspark").enableHiveSupport().getOrCreate()
-    spark.catalog.setCurrentDatabase("tlc_trusted")
+    spark.catalog.setCurrentDatabase(base)
     for p in elegidas:
         inicio = time.time()
         df = PREGUNTAS[p](spark)  # solo arma el plan (transformaciones lazy)
-        destino = f"s3://{bucket}/resultados/punto7/pyspark/{p}/"
+        destino = f"{salida}{p}/"
         df.coalesce(1).write.mode("overwrite").option("header", True).csv(destino)  # acción: aquí corre
         n = spark.read.option("header", True).csv(destino).count()
         print(f"{p}: {n} filas en {time.time() - inicio:.1f} s", flush=True)

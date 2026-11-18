@@ -80,6 +80,31 @@ def salida_step(s3, bucket, cluster, step):
     return f"(no apareció s3://{bucket}/{clave})"
 
 
+def esperar(emr, cluster, tope_min):
+    """Espera a que el cluster termine. Si pasa tope_min, lo termina (un step colgado nunca deja el cluster
+    sin steps, y seguiría cobrando). Devuelve (descripción del cluster, segundos)."""
+    inicio = time.time()
+    while (c := emr.describe_cluster(ClusterId=cluster)["Cluster"])["Status"]["State"] not in (
+            "TERMINATED", "TERMINATED_WITH_ERRORS"):
+        transcurrido = time.time() - inicio
+        if transcurrido > tope_min * 60:
+            print(f"  Pasaron {tope_min} min: termino el cluster {cluster}.", flush=True)
+            emr.terminate_job_flows(JobFlowIds=[cluster])
+            tope_min = float("inf")  # una sola vez; después solo espera a que quede TERMINATED
+        print(f"  {c['Status']['State']}... {transcurrido:.0f} s", flush=True)
+        time.sleep(30)
+    return c, time.time() - inicio
+
+
+def vaciar(s3, bucket, prefijo):
+    """Borra todo bajo un prefijo, para que una corrida fallida no deje pasar resultados de la anterior."""
+    if not prefijo.endswith("/") or prefijo.count("/") < 3:  # nunca "" ni "resultados/": borraría de más
+        raise ValueError(f"prefijo demasiado amplio para vaciar: {prefijo!r}")
+    for pag in s3.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=prefijo):
+        if claves := [{"Key": o["Key"]} for o in pag.get("Contents", [])]:
+            s3.delete_objects(Bucket=bucket, Delete={"Objects": claves, "Quiet": True})
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--lanzar", action="store_true")
@@ -98,14 +123,10 @@ def main():
     s3.upload_file(str(SCRIPT), bucket, CLAVE_SCRIPT)
     cluster = emr.run_job_flow(**req)["JobFlowId"]
     step = emr.list_steps(ClusterId=cluster)["Steps"][0]["Id"]
-    print(f"Cluster {cluster} lanzado; se apaga solo al terminar el step.", flush=True)
-    inicio = time.time()
-    while (c := emr.describe_cluster(ClusterId=cluster)["Cluster"])["Status"]["State"] not in (
-            "TERMINATED", "TERMINATED_WITH_ERRORS"):
-        print(f"  {c['Status']['State']}... {time.time() - inicio:.0f} s", flush=True)
-        time.sleep(30)
+    print(f"Cluster {cluster} lanzado; se apaga solo al terminar el step (tope 60 min).", flush=True)
+    c, segundos = esperar(emr, cluster, 60)
     estado_step = emr.describe_step(ClusterId=cluster, StepId=step)["Step"]["Status"]
-    print(f"Cluster {c['Status']['State']} en {time.time() - inicio:.0f} s "
+    print(f"Cluster {c['Status']['State']} en {segundos:.0f} s "
           f"({c['Status']['StateChangeReason'].get('Message', '')}). Step: {estado_step['State']}")
     if estado_step["State"] in ("COMPLETED", "FAILED"):  # un step cancelado no deja logs
         print(salida_step(s3, bucket, cluster, step))

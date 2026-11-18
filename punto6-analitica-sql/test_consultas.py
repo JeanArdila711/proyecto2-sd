@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path[:0] = [str(Path(__file__).resolve().parents[1]), str(Path(__file__).resolve().parent)]
 import consultas as c  # noqa: E402
 
 assert list(c.preguntas()) == ["p1", "p2", "p3", "p4", "p5", "p6"], c.preguntas()
@@ -20,4 +20,14 @@ hive = c.script_hive("b")
 assert hive.count("INSERT OVERWRITE DIRECTORY") == 6
 assert "'s3://b/resultados/punto6/hive/p3/'" in hive
 assert all(s.strip().upper().startswith(("USE", "INSERT")) for s in hive.split(";") if s.strip())
+assert all("HAVING 2 * sum(" in c.render("p6", m) for m in c.MOTORES), "P6: umbral con enteros en los tres"
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "punto5-catalogo"))
+import emr_hive  # noqa: E402
+for amplio in ("", "resultados/", "resultados/punto6", "resultados/punto6/"):
+    try:
+        emr_hive.vaciar(None, "b", amplio)  # debe fallar antes de tocar S3
+    except ValueError:
+        continue
+    raise AssertionError(f"vaciar aceptó un prefijo amplio: {amplio!r}")
 print("ok")

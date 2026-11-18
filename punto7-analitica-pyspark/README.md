@@ -51,44 +51,27 @@ python punto6-analitica-sql/comparar.py --con-pyspark
 
 ## Evidencias
 
-Pendientes en la cuenta de la demo (Jean): EMR con el cluster terminado y el step `COMPLETED`, y la terminal de `comparar.py --con-pyspark`, con el ID de la cuenta y el sufijo del bucket ocultos.
+Pendientes (Jean): EMR con el cluster terminado y el step `COMPLETED`, y la terminal de `comparar.py --con-pyspark`, con el ID de la cuenta y el sufijo del bucket ocultos.
 
-## Resultados — **muestra** (2026-11-17)
+## Resultados — cuenta de la demo, 24 meses (2026-11-17)
 
-> **Muestra**, no resultados del proyecto: 3 meses (2024-01 a 2024-03, 70,0 M viajes) en la cuenta de Andres. Los resultados finales salen de la cuenta de la demo con los 24 meses.
-
-`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 464 s con el step `COMPLETED`.
+`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 914 s (15 min) con el step `COMPLETED`.
 
 ```
-p1: 68 filas en 26.6 s
-p2: 17984 filas en 21.2 s
-p3: 242 filas en 18.6 s
-p4: 242 filas en 11.2 s
-p5: 282 filas en 15.0 s
-p6: 0 filas en 2.1 s
+p1: 537 filas en 72.5 s
+p2: 18596 filas en 124.3 s
+p3: 253 filas en 106.8 s
+p4: 249 filas en 60.3 s
+p5: 291 filas en 59.1 s
+p6: 96 filas en 131.3 s
 ```
 
-`comparar.py --con-pyspark`:
+`comparar.py --con-pyspark`: los cuatro motores dan los mismos números en las seis preguntas (tabla en el [README del Punto 6](../punto6-analitica-sql/README.md#resultados--cuenta-de-la-demo-24-meses-2026-11-17)).
 
-```
-pregunta     athena      hive  sparksql   pyspark  resultado
-p1               68        68        68        68  OK
-p2            17984     17984     17984     17984  OK
-p3              242       242       242       242  OK
-p4              242       242       242       242  OK
-p5              282       282       282       282  OK
-p6                0         0         0         0  OK
-OK: los motores dan los mismos números
-```
+- **P5:** los joins con `taxi_zones` se hacen solo en las ramas que los necesitan (`zona_origen` con el origen, `aeropuerto` con origen y destino), igual que el SQL. Así, un `pulocationid` que no esté en la tabla de zonas no cambia los conteos de `hora` ni de `distancia`.
+- **P6:** misma zona de cobro que el SQL (38 zonas), con el umbral comparado con enteros (`2 * con_cargo >= internos`).
+- La base y la ruta de salida llegan por argumentos desde `emr.py`, que las toma de `comun/config.py`.
 
-P6 sale vacía porque la muestra no tiene 2025 (ver el Punto 6).
+## Resultados — muestra (2026-11-17)
 
-## Qué tiene que correr Jean en la cuenta de la demo
-
-Después del Punto 6 y sin otro cluster EMR activo:
-
-```bash
-git pull
-python punto7-analitica-pyspark/emr.py --lanzar
-python punto6-analitica-sql/comparar.py --con-pyspark
-```
+3 meses (2024-01 a 2024-03) en la cuenta de Andres: el cluster terminó en 464 s y los cuatro motores coincidieron en P1–P5. P6 salió vacía porque la muestra no tiene 2025.

@@ -1,4 +1,4 @@
-"""Las seis consultas del Punto 6 y su adaptación a cada motor. Python puro, sin AWS.
+"""Las seis consultas del Punto 6 y su adaptación a cada motor. Python puro, sin llamadas a AWS.
 
 Cada pregunta vive en consultas/pN_*.sql, escrita una sola vez. Los tres motores aceptan el mismo SQL
 salvo un detalle: el tipo texto en un CAST se llama VARCHAR en Athena (Trino) y STRING en Hive y Spark.
@@ -6,10 +6,14 @@ Los .sql lo escriben como {TEXTO} y render() lo reemplaza.
 """
 from pathlib import Path
 
+from comun.config import RECURSOS as R  # quien importa este módulo pone la raíz del repo en sys.path
+
 DIR = Path(__file__).resolve().parent / "consultas"
+
 MOTORES = ("athena", "hive", "sparksql")
 TEXTO = {"athena": "VARCHAR", "hive": "STRING", "sparksql": "STRING"}
-RESULTADOS = "resultados/punto6/"  # s3://<bucket>/resultados/punto6/{motor}/{pregunta}...
+RESULTADOS = R["resultados_prefijo"] + "punto6/"  # s3://<bucket>/resultados/punto6/{motor}/{pregunta}...
+RESULTADOS_PYSPARK = R["resultados_prefijo"] + "punto7/pyspark/"  # Punto 7, para comparar.py
 
 
 def preguntas():
@@ -35,7 +39,7 @@ def destino(bucket, motor, pregunta):
 def script_hive(bucket):
     """Un .q con un INSERT OVERWRITE DIRECTORY por pregunta: Hive deja cada resultado como texto
     separado por tabuladores (los nombres de zona pueden traer comas)."""
-    partes = ["USE tlc_trusted;"]
+    partes = [f"USE {R['glue_base']};"]
     for p in preguntas():
         partes.append(f"INSERT OVERWRITE DIRECTORY '{destino(bucket, 'hive', p)}'\n"
                       "ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\t'\n"

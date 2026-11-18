@@ -50,9 +50,9 @@ Desde la raíz del repo, con el catálogo del Punto 5 listo:
 
 ```bash
 python punto6-analitica-sql/test_consultas.py   # ok
-python punto6-analitica-sql/athena.py           # ~1 min
+python punto6-analitica-sql/athena.py           # ~1 min, ~14 GiB escaneados con 24 meses
 python punto6-analitica-sql/emr.py              # muestra el cluster, sin crear nada
-python punto6-analitica-sql/emr.py --lanzar     # Hive + SparkSQL; se apaga solo
+python punto6-analitica-sql/emr.py --lanzar     # Hive + SparkSQL, ~50 min con 24 meses; se apaga solo
 python punto6-analitica-sql/comparar.py         # OK si los tres motores coinciden
 ```
 
@@ -60,54 +60,43 @@ Los resultados quedan en `s3://<bucket>/resultados/punto6/{athena,hive,sparksql}
 
 ## Evidencias
 
-Pendientes en la cuenta de la demo (Jean): consola de Athena con una consulta, EMR con el cluster `tlc-analitica` terminado y sus dos steps `COMPLETED`, y la terminal de `comparar.py`, con el ID de la cuenta y el sufijo del bucket ocultos.
+Pendientes (Jean): consola de Athena con una consulta, EMR con el cluster `tlc-analitica` terminado y sus dos steps `COMPLETED`, y la terminal de `comparar.py`, con el ID de la cuenta y el sufijo del bucket ocultos.
 
-## Resultados — **muestra** (2026-11-17)
+## Resultados — cuenta de la demo, 24 meses (2026-11-17)
 
-> **Muestra**, no resultados del proyecto: 3 meses (2024-01 a 2024-03) en la cuenta de Andres. Solo prueban que el código corre y que los tres motores coinciden. Los resultados finales salen de la cuenta de la demo con los 24 meses.
-
-Muestra: 70.026.229 viajes en `viajes` (`punto5-catalogo/verificar.py` en OK).
+2024-01 a 2025-12 de yellow, green y HVFHV en `tlc_trusted` (Punto 5).
 
 `athena.py`:
 
 ```
-p1: 68 filas, 106.4 MiB escaneados, 5.2 s
-p2: 17984 filas, 565.8 MiB escaneados, 9.4 s
-p3: 242 filas, 573.4 MiB escaneados, 9.9 s
-p4: 242 filas, 203.2 MiB escaneados, 4.9 s
-p5: 282 filas, 150.9 MiB escaneados, 6.0 s
-p6: 0 filas, 0.0 MiB escaneados, 1.6 s
-Escaneado en total: 1,599.8 MiB
+p1: 537 filas, 872.6 MiB escaneados, 5.5 s
+p2: 18596 filas, 4,657.3 MiB escaneados, 9.6 s
+p3: 253 filas, 4,667.4 MiB escaneados, 6.5 s
+p4: 249 filas, 1,634.3 MiB escaneados, 6.5 s
+p5: 291 filas, 1,301.2 MiB escaneados, 8.2 s
+p6: 96 filas, 1,425.8 MiB escaneados, 8.9 s
+Escaneado en total: 14,558.5 MiB
 ```
 
-`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 805 s, con los dos steps `COMPLETED`. SparkSQL tardó entre 2,5 y 26 s por pregunta.
+`emr.py --lanzar` (`emr-7.14.0`, un `m5.xlarge`): el cluster terminó solo en 2866 s (48 min), con los dos steps `COMPLETED`. Hive tardó entre 3 y 6 min por pregunta; SparkSQL, entre 55 y 128 s.
 
-`comparar.py`:
+`comparar.py --con-pyspark` (después del [Punto 7](../punto7-analitica-pyspark/)):
 
 ```
-pregunta     athena      hive  sparksql  resultado
-p1               68        68        68  OK
-p2            17984     17984     17984  OK
-p3              242       242       242  OK
-p4              242       242       242  OK
-p5              282       282       282  OK
-p6                0         0         0  OK
+pregunta     athena      hive  sparksql   pyspark  resultado
+p1              537       537       537       537  OK
+p2            18596     18596     18596     18596  OK
+p3              253       253       253       253  OK
+p4              249       249       249       249  OK
+p5              291       291       291       291  OK
+p6               96        96        96        96  OK
 OK: los motores dan los mismos números
 ```
 
-- **P6 sale vacía en la muestra, como se esperaba:** la zona de cobro se deriva de los viajes de 2025 con `cbd_fee > 0`, y la muestra solo tiene 2024. La consulta corre en los tres motores; su resultado real sale con los 24 meses.
-- **Tolerancia de `comparar.py`:** en P2, `millas` (redondeada a 2 decimales) difirió en 0,01 en 368 de 17.984 filas entre motores, con el mismo costo por milla: cada motor suma los double en otro orden y el total cae en el borde del redondeo. Por eso la tolerancia es una unidad en el segundo decimal.
+- **Zona de cobro de P6:** 38 zonas, todas de Manhattan (convención "Zonas de cobro por congestión"). La primera versión tomaba toda zona de destino con algún viaje de 2025 con cargo y daba 261, porque el cargo también lo pagan viajes que solo salen del área (hacia JFK, Newark o Brooklyn). Con los viajes internos a cada zona el corte es limpio: las 38 tienen 0,69 o más y la siguiente, 0,44. El umbral se compara con enteros (`2 * sum(...) >= count(*)`) porque `avg(1.0)` es DECIMAL en Athena y DOUBLE en Hive y Spark.
+- **Tolerancia de `comparar.py`:** en P2, `millas` (redondeada a 2 decimales) puede diferir en 0,01 entre motores con el mismo costo por milla: cada motor suma los double en otro orden y el total cae en el borde del redondeo. Por eso la tolerancia es una unidad en el segundo decimal. Una pregunta vacía en algunos motores y no en otros es error; vacía en todos solo avisa (P6 en una muestra sin 2025).
+- **Corridas limpias:** `athena.py` y los dos `emr.py` borran sus prefijos de `resultados/` antes de correr, así que un motor que falla deja su prefijo vacío y `comparar.py` lo marca. Los `emr.py` terminan el cluster si pasa el tope (`--tope-min`, 180 en este punto) e imprimen el comando para terminarlo a mano si se corta la terminal.
 
-## Qué tiene que correr Jean en la cuenta de la demo
+## Resultados — muestra (2026-11-17)
 
-Con el catálogo de los 24 meses ya listo y sin otro cluster EMR activo:
-
-```bash
-git pull
-python punto6-analitica-sql/test_consultas.py
-python punto6-analitica-sql/athena.py
-python punto6-analitica-sql/emr.py --lanzar      # un m5.xlarge, se apaga solo
-python punto6-analitica-sql/comparar.py
-```
-
-Con los 24 meses, Athena escanea unas 8 veces más que en la muestra (unos 13 GiB, ~USD 0,06). El step de Hive en un solo nodo es lo más lento: en la muestra los dos steps tardaron unos 13 min con el arranque; con 8 veces más datos puede pasar de una hora. Si tarda demasiado, se puede subir el nodo a `m5.2xlarge` (aceptado por la API en Academy según `findings.md`, sin probar).
+3 meses (2024-01 a 2024-03, 70,0 M viajes) en la cuenta de Andres, para probar el código antes de la cuenta de la demo: Athena, Hive y SparkSQL coincidieron en P1–P5 (68, 17.984, 242, 242 y 282 filas) en un cluster de 805 s. P6 salió vacía porque la muestra no tiene 2025.

@@ -14,7 +14,6 @@ Uso (desde la raíz del repo):
 import argparse
 import json
 import sys
-import time
 from pathlib import Path
 
 DIR = Path(__file__).resolve().parent
@@ -26,6 +25,7 @@ from comun.config import RECURSOS as R  # noqa: E402
 import emr_hive  # noqa: E402  (Punto 5: LIBERACION, TIPO, subred, salida_step, PREFIJO_LOGS)
 
 CLAVE_SCRIPT = R["s3_prefijo_codigo"] + "punto7-analitica-pyspark/preguntas.py"
+RESULTADOS = R["resultados_prefijo"] + "punto7/pyspark/"
 GLUE = "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
 
 
@@ -42,7 +42,8 @@ def solicitud(bucket, subnet):
                    "KeepJobFlowAliveWhenNoSteps": False, "TerminationProtected": False, "Ec2SubnetId": subnet},
         Steps=[{"Name": "punto7-pyspark", "ActionOnFailure": "TERMINATE_CLUSTER", "HadoopJarStep": {
             "Jar": "command-runner.jar",
-            "Args": ["spark-submit", "--deploy-mode", "client", f"s3://{bucket}/{CLAVE_SCRIPT}", bucket]}}],
+            "Args": ["spark-submit", "--deploy-mode", "client", f"s3://{bucket}/{CLAVE_SCRIPT}",
+                     R["glue_base"], f"s3://{bucket}/{RESULTADOS}"]}}],
         JobFlowRole="EMR_EC2_DefaultRole",
         ServiceRole="EMR_DefaultRole",
         VisibleToAllUsers=True,
@@ -53,6 +54,8 @@ def solicitud(bucket, subnet):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--lanzar", action="store_true")
+    p.add_argument("--tope-min", type=int, default=120,
+                   help="minutos antes de terminar el cluster a la fuerza (por defecto 120)")
     args = p.parse_args()
     aws = config.sesion(config.cargar())
     emr, s3 = aws.client("emr"), aws.client("s3")
@@ -66,16 +69,14 @@ def main():
         print("No se lanzó nada. Para lanzar: --lanzar")
         return
     s3.upload_file(str(DIR / "preguntas.py"), bucket, CLAVE_SCRIPT)
+    emr_hive.vaciar(s3, bucket, RESULTADOS)
     cluster = emr.run_job_flow(**req)["JobFlowId"]
     step = emr.list_steps(ClusterId=cluster)["Steps"][0]["Id"]
-    print(f"Cluster {cluster} lanzado; se apaga solo al terminar el step.", flush=True)
-    inicio = time.time()
-    while (c := emr.describe_cluster(ClusterId=cluster)["Cluster"])["Status"]["State"] not in (
-            "TERMINATED", "TERMINATED_WITH_ERRORS"):
-        print(f"  {c['Status']['State']}... {time.time() - inicio:.0f} s", flush=True)
-        time.sleep(30)
+    print(f"Cluster {cluster} lanzado; se apaga solo al terminar el step (tope {args.tope_min} min). "
+          f"Si esta terminal se corta: aws emr terminate-clusters --cluster-ids {cluster}", flush=True)
+    c, segundos = emr_hive.esperar(emr, cluster, args.tope_min)
     estado = emr.describe_step(ClusterId=cluster, StepId=step)["Step"]["Status"]["State"]
-    print(f"Cluster {c['Status']['State']} en {time.time() - inicio:.0f} s. Step: {estado}")
+    print(f"Cluster {c['Status']['State']} en {segundos:.0f} s. Step: {estado}")
     if estado in ("COMPLETED", "FAILED"):
         print(emr_hive.salida_step(s3, bucket, cluster, step)[-4000:])
     sys.exit(0 if estado == "COMPLETED" else 1)
