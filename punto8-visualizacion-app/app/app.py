@@ -132,16 +132,23 @@ with tabs[0]:
     encabezado("p1", titulo)
     boroughs = [a.TODA_LA_CIUDAD] + sorted(b for b in df["borough"].unique() if b != "EWR")
     borough = st.radio("Borough", boroughs, horizontal=True, key="b1", label_visibility="collapsed")
-    anual = a.p1_por_anio(df, borough)
+    anual = a.p1_por_anio(df, borough).fillna(0)
+    # El último año con datos y el anterior, si existe: con una muestra de un solo año no hay comparación
+    anios = sorted(anual.columns)
+    ultimo, previo = anios[-1], (anios[-2] if len(anios) > 1 else None)
     cols = st.columns(4)
     for col, c in zip(cols, a.COMPANIAS):
         if c in anual.index:
-            v24, v25 = anual.loc[c, "2024"], anual.loc[c, "2025"]
-            col.metric(f"{a.NOMBRES[c]}, 2025", pct(v25), f"{v25 - v24:+.1f}".replace(".", ",") + " pp vs. 2024")
-    lider = anual["2025"].idxmax()
-    hallazgo(f"En {borough.lower() if borough == a.TODA_LA_CIUDAD else borough}, {a.NOMBRES[lider]} se lleva "
-             f"{pct(anual.loc[lider, '2025'])} de los viajes de 2025. El taxi amarillo pasó de "
-             f"{pct(anual.loc['yellow', '2024'])} a {pct(anual.loc['yellow', '2025'])}.")
+            v = anual.loc[c, ultimo]
+            delta = (f"{v - anual.loc[c, previo]:+.1f}".replace(".", ",") + f" pp vs. {previo}") if previo else None
+            col.metric(f"{a.NOMBRES[c]}, {ultimo}", pct(v), delta)
+    lider = anual[ultimo].idxmax()
+    lugar = borough.lower() if borough == a.TODA_LA_CIUDAD else borough
+    texto = f"En {lugar}, {a.NOMBRES[lider]} se lleva {pct(anual.loc[lider, ultimo])} de los viajes de {ultimo}."
+    if previo and "yellow" in anual.index:
+        texto += (f" El taxi amarillo pasó de {pct(anual.loc['yellow', previo])} a "
+                  f"{pct(anual.loc['yellow', ultimo])}.")
+    hallazgo(texto)
     serie = a.p1_participacion(df, borough)
     st.altair_chart(lineas(serie, "fecha", "participacion", "Mes", "Participación (%)", ".1f", tipo_x="T"),
                     use_container_width=True)
@@ -249,6 +256,14 @@ with tabs[4]:
 with tabs[5]:
     titulo, df = datos("p6")
     encabezado("p6", titulo)
+    anios_p6 = set(df["year"]) if len(df) else set()
+    if not {"2024", "2025"} <= anios_p6:
+        # Sin 2024 y 2025 no hay antes y después del cobro (por ejemplo, una muestra solo de 2024).
+        # P6 es la última pestaña: st.stop() solo corta lo que queda de ella.
+        st.info("Esta pregunta compara 2024 con 2025 y los datos cargados no tienen los dos años "
+                f"(hay: {', '.join(sorted(anios_p6)) or 'ninguno'}). Con 2024 y 2025 completos aparece la comparación.")
+        tabla(df, "p6")
+        st.stop()
     comp = a.p6_companias(df).set_index("compania")
     mensual = a.p6_mensual(df)
     total24, total25 = mensual["2024"].sum(), mensual["2025"].sum()

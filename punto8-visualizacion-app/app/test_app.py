@@ -11,5 +11,8 @@ for radio in at.radio:
         radio.set_value(opcion).run()
         assert not at.exception, (radio.key, opcion, at.exception)
 graficas = len(at.get("arrow_vega_lite_chart"))
-assert graficas >= 9, f"se esperaban al menos 9 gráficas y hay {graficas}"
+# Con datos de un solo año (una muestra), P6 muestra un aviso en vez de sus dos gráficas
+p6_sin_comparacion = any("compara 2024 con 2025" in i.value for i in at.info)
+minimo = 7 if p6_sin_comparacion else 9
+assert graficas >= minimo, f"se esperaban al menos {minimo} gráficas y hay {graficas}"
 print(f"ok: {len(at.radio)} selectores recorridos, {graficas} gráficas, {len(at.metric)} cifras clave")
